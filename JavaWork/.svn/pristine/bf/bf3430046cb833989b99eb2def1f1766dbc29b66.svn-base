@@ -1,0 +1,89 @@
+package com.hasanunlukilinc.sms.entities;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+public class Debt {
+
+	private int	   month;
+	private String monthName;
+	private Date   period;
+	private double totalDebt;
+	private List<Receivable> 		receivables = new ArrayList<Receivable>();
+
+	private String[] monthNames = {"Ocak" , "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz",
+									"Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"};
+
+	public Debt(int _month)
+	{
+		month = _month;
+		monthName = monthNames[month-1];
+	}
+	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + month;
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Debt other = (Debt) obj;
+		if (month != other.month)
+			return false;
+		return true;
+	}
+
+
+	public List<Receivable> getReceivables() {
+		return receivables;
+	}
+	
+	public void setReceivables(List<Receivable> receivables) {
+		this.receivables = receivables;
+	}
+	
+	public int getMonth() {
+		return month;
+	}
+	
+	public void setMonth(int month) {
+		this.month = month;
+	}
+	
+	public String getMonthName() {
+		return monthName;
+	}
+	
+	public void setMonthName(String monthName) {
+		this.monthName = monthName;
+	}
+	
+	public double getTotalDebt() {
+		return totalDebt;
+	}
+	
+	public void setTotalDebt(double totalDebt) {
+		this.totalDebt = totalDebt;
+	}
+
+	public Date getPeriod() {
+		return period;
+	}
+
+	public void setPeriod(Date period) {
+		this.period = period;
+	}
+	
+	
+	
+}

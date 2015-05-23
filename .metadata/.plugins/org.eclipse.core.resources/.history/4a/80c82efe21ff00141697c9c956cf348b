@@ -1,0 +1,5 @@
+package com.aligumusoglu.javawork.application;
+
+public enum PublicResult {
+	SUCCESS,FAIL,DUMPLICATE
+}

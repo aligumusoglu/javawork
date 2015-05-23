@@ -1,0 +1,98 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.hasanunlukilinc.sms.services;
+
+import com.hasanunlukilinc.sms.entities.OverdueInterest;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import org.apache.log4j.Logger;
+
+/**
+ *
+ * @author gngnew
+ */
+public class OverdueInterestServiceImpl extends BaseService implements OverdueInterestService {
+
+    private final Logger log = Logger.getLogger(OverdueInterestServiceImpl.class);
+
+    @Override
+    public List<OverdueInterest> fetchOverdueInterests() {
+        List<OverdueInterest> data = null;
+
+        try {
+            data = getDaoFactory().getOverdueInterestDao().findAll();
+        } catch (Exception e) {
+            log.error(e, e);
+        } finally {
+            closeSession();
+        }
+
+        return data;
+    }
+
+    @Override
+    public void saveOverdueInterest(OverdueInterest overdueInterest) {
+        try {
+            beginTransaction();
+            getDaoFactory().getOverdueInterestDao().merge(overdueInterest);
+            commitTransaction();
+        } catch (Exception e) {
+            rollback();
+            log.error(e, e);
+            throw e;
+        } finally {
+            closeSession();
+        }
+    }
+
+    @Override
+    public Double getOverdueInterestRate(Date date) {
+        Double rate = null;
+        try {
+            rate = getDaoFactory().getOverdueInterestDao().getOverdueInterestRate(date);
+        } catch (Exception e) {
+            log.error(e, e);
+            throw e;
+        } finally {
+            closeSession();
+        }
+        return rate;
+    }
+
+    public static void testSave() {
+        OverdueInterest i = new OverdueInterest();
+        i.setInterestDate(new Date());
+        i.setInterestRate(0.05);
+        serv.saveOverdueInterest(i);
+    }
+
+    public static void testFetch() {
+        List<OverdueInterest> data = serv.fetchOverdueInterests();
+        for (OverdueInterest i : data) System.out.println(i);
+    }
+
+    public static void testRate() {
+        Date d = new Date();
+//        Calendar c = Calendar.getInstance();
+//        c.setTime(d);
+//        c.set(Calendar.DAY_OF_MONTH, 10);
+//        d = c.getTime();
+        System.out.println(d);
+        
+        Double rate = serv.getOverdueInterestRate(d);
+        System.out.println(rate);
+    }
+
+    public static void main(String[] args) {
+        serv = new OverdueInterestServiceImpl();
+        //testSave();
+        testRate();
+//        testFetch();
+    }
+
+    public static OverdueInterestServiceImpl serv;
+}

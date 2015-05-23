@@ -1,0 +1,51 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.hasanunlukilinc.sms.dao;
+
+import java.util.Date;
+
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
+
+import com.hasanunlukilinc.sms.entities.MonthBalance;
+import com.hasanunlukilinc.sms.services.SessionProvider;
+
+/**
+ *
+ * @author gngnew
+ * @author hasan
+ */
+public class MonthBalanceDao extends BaseDao<MonthBalance>
+{
+
+	private static final long serialVersionUID = 1L;
+
+	public MonthBalanceDao(SessionProvider sp)
+	{
+		super(sp);
+	}
+
+	public MonthBalance getActiveMonthBalanceByApartmentId(Long apartmentId, Date balanceDate)
+	{
+		MonthBalance monthBalance = null;
+		Criteria criteria = createCriteria(MonthBalance.class);
+		criteria.add(Restrictions.eq("apartmentId", apartmentId));
+		criteria.add(Restrictions.eq("balanceDate", balanceDate));
+		monthBalance = (MonthBalance)criteria.uniqueResult();
+		return monthBalance;
+	}
+	
+	public MonthBalance getMonthBalanceByApartmentId(Long apartmentId, Date balanceDate)
+	{
+		MonthBalance monthBalance = null;
+		Criteria criteria = createCriteria(MonthBalance.class);
+		criteria.add(Restrictions.eq("apartmentId", apartmentId));
+		criteria.add(Restrictions.eq("balanceDate", balanceDate));
+		monthBalance = (MonthBalance)criteria.uniqueResult();
+		return monthBalance;
+	}
+
+}

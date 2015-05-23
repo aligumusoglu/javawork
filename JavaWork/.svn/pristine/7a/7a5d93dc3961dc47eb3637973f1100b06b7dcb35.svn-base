@@ -1,0 +1,65 @@
+package com.hasanunlukilinc.sms.dialog;
+
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
+import org.primefaces.context.RequestContext;
+
+import com.hasanunlukilinc.sms.beans.BaseBean;
+import com.hasanunlukilinc.sms.entities.Apartment;
+
+/**
+ * 
+ * @author hasan
+ *
+ */
+
+@ManagedBean(name = "apartmentListDialogBean")
+@ViewScoped
+public class ApartmentListDialogBean extends BaseBean
+{
+
+	private List<Apartment>	apartmentList;
+	private List<Apartment>	filterApartmentList;
+
+	@PostConstruct
+	private void initBean()
+	{
+		fetchApartmentList();
+	}
+
+	private void fetchApartmentList()
+	{
+		filterApartmentList = null;
+		apartmentList = getServiceFactory().getBuildingsService().fetchApartments();
+	}
+
+	public void selectedApartmentFromDialog(Apartment selectedApartment)
+	{
+		RequestContext.getCurrentInstance().closeDialog(selectedApartment);
+	}
+
+	public List<Apartment> getApartmentList()
+	{
+		return apartmentList;
+	}
+
+	public void setApartmentList(List<Apartment> apartmentList)
+	{
+		this.apartmentList = apartmentList;
+	}
+
+	public List<Apartment> getFilterApartmentList()
+	{
+		return filterApartmentList;
+	}
+
+	public void setFilterApartmentList(List<Apartment> filterApartmentList)
+	{
+		this.filterApartmentList = filterApartmentList;
+	}
+
+}

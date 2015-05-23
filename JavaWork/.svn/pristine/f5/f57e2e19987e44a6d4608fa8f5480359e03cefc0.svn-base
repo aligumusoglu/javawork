@@ -1,0 +1,83 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.hasanunlukilinc.sms.services;
+
+import com.hasanunlukilinc.sms.entities.User;
+import java.util.List;
+import org.apache.log4j.Logger;
+
+/**
+ *
+ * @author gungor
+ */
+class UserServiceImpl extends BaseService implements UserService
+{
+
+	private Logger	log	= Logger.getLogger(UserServiceImpl.class);
+
+	public UserServiceImpl()
+	{
+	}
+
+	@Override
+	public User checkUser(String username, String password)
+	{
+		User user = null;
+		try
+		{
+			user = getDaoFactory().getUserDao().checkUser(username, password);
+		}
+		catch (Exception e)
+		{
+			log.error("failed!", e);
+		}
+		finally
+		{
+			closeSession();
+		}
+		return user;
+	}
+
+	@Override
+	public List<User> getUsers(Long userId, String ip)
+	{
+		List<User> users = null;
+		try
+		{
+			users = getDaoFactory().getUserDao().getUsers(userId, ip);
+		}
+		catch (Exception e)
+		{
+			log.error("failed!", e);
+		}
+		finally
+		{
+			closeSession();
+		}
+		return users;
+	}
+
+	@Override
+	public void saveUser(Long userId, String ip, User user)
+	{
+		try
+		{
+			beginTransaction();
+			getDaoFactory().getUserDao().saveUser(userId, ip, user);
+			commitTransaction();
+		}
+		catch (Exception e)
+		{
+			rollback();
+			throw e;
+		}
+		finally
+		{
+			closeSession();
+		}
+	}
+
+}

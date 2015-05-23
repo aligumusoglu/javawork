@@ -1,0 +1,241 @@
+package com.hasanunlukilinc.sms.beans;
+
+import java.io.Serializable;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.faces.application.FacesMessage;
+import javax.faces.bean.ManagedProperty;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
+import org.primefaces.component.datatable.DataTable;
+import org.primefaces.context.RequestContext;
+import org.primefaces.model.StreamedContent;
+
+import com.hasanunlukilinc.sms.entities.ReportPermission;
+import com.hasanunlukilinc.sms.enums.ReportType;
+import com.hasanunlukilinc.sms.services.ServiceFactory;
+
+/**
+ *
+ * @author Gungor Akbiyik <gungor.akbiyik at gmail.com>
+ */
+public abstract class BaseBean implements Serializable
+{
+
+	@ManagedProperty(value = "#{sessionBean}")
+	private SessionBean		sessionBean;
+	@ManagedProperty(value = "#{applicationBean}")
+	private ApplicationBean	applicationBean;
+	private StreamedContent	streamedContent;
+	
+	public BaseBean()
+	{
+	}
+
+	public ServiceFactory getServiceFactory()
+	{
+		return getSessionBean().getServiceFactory();
+	}
+
+	public SessionBean getSessionBean()
+	{
+		return sessionBean;
+	}
+
+	public void setSessionBean(SessionBean sessionBean)
+	{
+		this.sessionBean = sessionBean;
+	}
+
+	public ApplicationBean getApplicationBean()
+	{
+		return applicationBean;
+	}
+
+	public void setApplicationBean(ApplicationBean applicationBean)
+	{
+		this.applicationBean = applicationBean;
+	}
+
+	protected void addMessage(String clientId, FacesMessage.Severity severity, String summary, String message)
+	{
+		FacesContext.getCurrentInstance().addMessage(clientId, new FacesMessage(severity, summary, message));
+	}
+
+	protected void addErrorMessage(String clientId, String summary, String message)
+	{
+		addMessage(clientId, FacesMessage.SEVERITY_ERROR, summary, message);
+	}
+
+	protected void addErrorMessage(String summary, String message)
+	{
+		addErrorMessage(null, summary, message);
+	}
+
+	protected void addErrorMessage(String message)
+	{
+		addErrorMessage("Hata!", message);
+	}
+
+	protected void addInfoMessage(String clientId, String summary, String message)
+	{
+		addMessage(clientId, FacesMessage.SEVERITY_INFO, summary, message);
+	}
+
+	protected void addInfoMessage(String summary, String message)
+	{
+		addInfoMessage(null, summary, message);
+	}
+
+	protected void addInfoMessage(String message)
+	{
+		addInfoMessage("Bilgi", message);
+	}
+
+	protected void addWarningMessage(String clientId, String summary, String message)
+	{
+		addMessage(clientId, FacesMessage.SEVERITY_WARN, summary, message);
+	}
+
+	protected void addWarningMessage(String summary, String message)
+	{
+		addWarningMessage(null, summary, message);
+	}
+
+	protected void addWarningMessage(String message)
+	{
+		addWarningMessage("Uyarı!", message);
+	}
+
+	protected void addSavedMessage()
+	{
+		addInfoMessage("Başarıyla Kaydedildi");
+	}
+
+	protected void addNotSaveMessage()
+	{
+		addErrorMessage("İşlem Kaydedilemedi!");
+	}
+
+	protected void addDeletedMessage()
+	{
+		addInfoMessage("Basariyla silindi");
+	}
+
+	protected void addNotDeletedMessage()
+	{
+		addErrorMessage("İşlem Silinemedi!");
+	}
+
+	protected void showDialog(String dialogName)
+	{
+		executeJs("showDialog('" + dialogName + "');");
+	}
+
+	protected void hideDialog(String dialogName)
+	{
+		executeJs("hideDialog('" + dialogName + "');");
+	}
+
+	protected Long getUserId()
+	{
+		return (getSessionBean() != null && getSessionBean().getPerson().getId() != null) ? getSessionBean().getPerson()
+				.getId() : null;
+	}
+
+	protected String getIp()
+	{
+		return (getSessionBean() != null) ? getSessionBean().getCurrentIpAddress() : null;
+	}
+
+	protected String getSessionId()
+	{
+		return FacesContext.getCurrentInstance().getExternalContext().getSessionId(false);
+	}
+
+	protected HttpSession getSession()
+	{
+		return (HttpSession)((HttpServletRequest)FacesContext.getCurrentInstance().getExternalContext().getRequest())
+				.getSession();
+	}
+
+	protected void updateGrowl()
+	{
+		update("growl");
+	}
+
+	protected void update(String id)
+	{
+		RequestContext.getCurrentInstance().update(id);
+	}
+
+	public String toUpperCase(String text)
+	{
+		return text.toUpperCase(new java.util.Locale("tr", "TR"));
+	}
+
+	protected void update(String... ids)
+	{
+		RequestContext.getCurrentInstance().update(Arrays.asList(ids));
+	}
+
+	protected void executeJs(String js)
+	{
+		RequestContext.getCurrentInstance().execute(js);
+	}
+
+	protected void openAsDialog(String page)
+	{
+		RequestContext.getCurrentInstance().openDialog(page);
+	}
+
+	protected void openAsDialog(String page, Map<String, Object> options, Map<String, List<String>> map1)
+	{
+		RequestContext.getCurrentInstance().openDialog(page, options, map1);
+	}
+
+	public boolean checkPermission(Date permissionPeriod)
+	{
+		ReportPermission rp= getServiceFactory().getReportPermissionService().findByApartmentId(getSessionBean().getSelectedHouse().getBlock().getApartmentId(), ReportType.MONTH_BALANCE.getType(), permissionPeriod);
+		return rp == null ? false : rp.isPermission();
+	}
+
+	protected void addSuccessCallbackParam()
+	{
+		RequestContext.getCurrentInstance().addCallbackParam("success", true);
+	}
+
+	protected UIComponent findComponent(String id)
+	{
+		return FacesContext.getCurrentInstance().getViewRoot().findComponent(id);
+	}
+
+	protected void resetDatatableFilter(String id)
+	{
+		DataTable dataTable = (DataTable)findComponent(id);
+		if (dataTable != null)
+		{
+			dataTable.reset();
+		}
+	}
+
+	protected String toLocaleUpperCase(String text)
+	{
+		return text.toUpperCase(new java.util.Locale("tr", "TR"));
+	}
+	
+	public StreamedContent getStreamedContent() {
+		return streamedContent;
+	}
+	
+	public void setStreamedContent(StreamedContent streamedContent) {
+		this.streamedContent = streamedContent;
+	}
+
+}

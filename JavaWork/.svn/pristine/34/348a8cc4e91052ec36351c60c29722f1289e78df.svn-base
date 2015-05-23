@@ -1,0 +1,48 @@
+package com.hasanunlukilinc.sms.enums;
+
+public enum ReportType
+{
+	/*
+	0: Sign  List Report
+	1: Month Balance Report 
+	2: Bank  Statement Report 
+	3: Debt  List Report
+	4: Expense List Report
+	5: Income  List Report 
+	*/
+
+	SIGN_LIST(0, "İmza Listesi"),   MONTH_BALANCE(1, "Aylık Bilanço"), BANK_STATEMENT(2, "Hesap Özeti"), 
+	DEBT_LIST(3, "Borçlu Listesi"), EXPENSE_LIST(4, "Gider Listesi"),  INCOME_LIST(5, "Gelir Listesi");
+
+	private int		type;
+	private String	typeName;
+
+	private ReportType(int type, String typeName)
+	{
+		this.type = type;
+		this.typeName = typeName;
+	}
+
+	public static ReportType find(int type)
+	{
+		for (ReportType ht : values())
+		{
+			if (ht.type == type)
+			{
+				return ht;
+			}
+		}
+		return null;
+	}
+
+	public int getType()
+	{
+		return type;
+	}
+
+	public String getTypeName()
+	{
+		return typeName;
+	}
+
+}

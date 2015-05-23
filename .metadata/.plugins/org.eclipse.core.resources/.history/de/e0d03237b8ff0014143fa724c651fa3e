@@ -1,0 +1,101 @@
+package com.aligumusoglu.javawork.dao;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.bson.types.ObjectId;
+
+import com.aligumusoglu.javawork.enums.PublicResult;
+import com.aligumusoglu.javawork.model.User;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBCursor;
+import com.mongodb.DBObject;
+import com.mongodb.MongoException;
+
+/**
+ * 
+ * @author Ali
+ *
+ */
+public class UserDao extends BaseDao {
+
+	public PublicResult save(User user) {
+		PublicResult result = PublicResult.FAIL;
+		try {
+			BasicDBObject object = new BasicDBObject();
+
+			object.put("name", user.getName());
+			object.put("surname", user.getSurname());
+			object.put("phone", user.getPhone());
+
+			getDbCollection("user").insert(object);
+			result = PublicResult.SUCCESS;
+
+		} catch (MongoException e) {
+			// e.getCode()
+			e.printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	public List<User> fetchUserList() {
+		List<User> userList = new ArrayList<User>();
+		try {
+			DBCursor cursor = getDbCollection("user").find();
+			BasicDBObject object = null;
+			User user = null;
+			while (cursor.hasNext()) {
+				object = (BasicDBObject) cursor.next();
+				user = new User();
+				user.set_id(object.getString("_id"));
+				user.setName(object.getString("name"));
+				user.setSurname(object.getString("surname"));
+				user.setPhone(object.getString("phone"));
+				userList.add(user);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			// TODO: log düş
+		}
+		return userList;
+	}
+
+	public PublicResult deleteUser(String id) {
+		PublicResult result = PublicResult.FAIL;
+		try {
+			BasicDBObject object = new BasicDBObject();
+			object.put("_id", new ObjectId(id));
+			DBObject dbObject = getDbCollection("user").findOne(object);
+			getDbCollection("user").remove(dbObject);
+			result = PublicResult.SUCCESS;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return result;
+	}
+
+	public PublicResult updateUser(String id, User user) {
+		PublicResult result = PublicResult.FAIL;
+
+		try {
+			BasicDBObject object = new BasicDBObject();
+			object.put("_id", new ObjectId(id));
+			DBObject dbObject = getDbCollection("user").findOne(object);
+
+			BasicDBObject updateObject = new BasicDBObject();
+			updateObject.put("name", user.getName());
+			updateObject.put("surname", user.getSurname());
+			updateObject.put("phone", user.getPhone());
+			getDbCollection("user").update(dbObject, updateObject);
+			result = PublicResult.SUCCESS;
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return result;
+	}
+}

@@ -1,0 +1,45 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.hasanunlukilinc.sms.dao;
+
+import com.hasanunlukilinc.sms.entities.Contract;
+import com.hasanunlukilinc.sms.entities.Expense;
+import com.hasanunlukilinc.sms.services.SessionProvider;
+
+import java.util.Date;
+import java.util.List;
+
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
+
+/**
+ *
+ * @author gngnew
+ * @author hasan
+ */
+public class ContractDao extends BaseDao<Contract>
+{
+
+	public ContractDao(SessionProvider sp)
+	{
+		super(sp);
+	}
+
+	public List<Contract> searchByApartmentId(Long apartmentId)
+	{
+		return getSession().createCriteria(Contract.class).add(Restrictions.eq("apartmentId", apartmentId)).list();
+	}
+
+	public Contract getActiveContractByApartmentId(Long apartmentId)
+	{
+		Contract contract = null;
+		Criteria criteria = createCriteria(Contract.class);
+		criteria.add(Restrictions.eq("apartmentId", apartmentId));
+		criteria.add(Restrictions.eq("validityStatus", true));
+		contract = (Contract)criteria.uniqueResult();
+		return contract;
+	}
+}

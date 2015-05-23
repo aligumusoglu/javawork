@@ -1,0 +1,26 @@
+package com.aligumusoglu.javawork.dao;
+
+import java.security.Timestamp;
+
+import com.aligumusoglu.javawork.enums.AppLogType;
+import com.mongodb.BasicDBObject;
+
+public class AppLogDao extends BaseDao {
+
+	public void saveAppLog(AppLogType appLogType, String definition, Timestamp processDate)
+	{
+		try {
+			BasicDBObject object = new BasicDBObject();
+			
+			object.put("app_log_type", appLogType);
+			object.put("definition", definition);
+			object.put("process_date", processDate);
+			
+			getDbCollection("log").insert(object);
+			
+		} catch (Exception e) {
+			
+		}
+	}
+	
+}

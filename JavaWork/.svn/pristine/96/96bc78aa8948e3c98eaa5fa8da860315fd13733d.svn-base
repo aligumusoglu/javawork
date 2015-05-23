@@ -1,0 +1,289 @@
+package com.hasanunlukilinc.sms.entities;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+
+/**
+ *
+ * @author hasan
+ *
+ */
+@Entity
+@Table(name = "apartment")
+@NamedQueries({@NamedQuery(name = "Apartment.findAll", query = "SELECT a FROM Apartment a")})
+@SequenceGenerator(name = "seq_apartment_id", sequenceName = "seq_apartment_id", allocationSize = 1)
+public class Apartment extends BaseEntity implements Serializable
+{
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "apartmentId", fetch = FetchType.LAZY)
+	private List<Dues>			duesList;
+	@OneToMany(mappedBy = "apartmentId")
+	private List<Contract>		contractList;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "apartmentId")
+	private List<Janitor>		janitorList;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "apartmentId")
+	private List<Receivable>	receivableList;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "apartment")
+	private List<Block>			blockList;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "apartmentId")
+	private List<Expense>		expenseList;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "apartmentId")
+	private List<MonthBalance>	monthBalanceList;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "apartmentId")
+	private List<Income>		incomeList;
+	private static final long	serialVersionUID	= 1L;
+
+	@Id
+	@Basic(optional = false)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_apartment_id")
+	@Column(name = "id")
+	private Long				id;
+
+	@Column(name = "name")
+	private String				name;
+	@Column(name = "address")
+	private String				address;
+	@Column(name = "phone")
+	private String				phone;
+	@Column(name = "tax_number")
+	private String				taxNumber;
+	@Column(name = "tax_office")
+	private String				taxOffice;
+	@Column(name = "business_registration_number")
+	private String				businessRegistrationNumber;
+
+	@Basic(optional = false)
+	@Column(name = "active")
+	private boolean				active;
+
+	public Apartment()
+	{
+	}
+
+	public Long getId()
+	{
+		return id;
+	}
+
+	public void setId(Long id)
+	{
+		this.id = id;
+	}
+
+	public String getName()
+	{
+		return name;
+	}
+
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
+	public String getAddress()
+	{
+		return address;
+	}
+
+	public void setAddress(String address)
+	{
+		this.address = address;
+	}
+
+	public String getPhone()
+	{
+		return phone;
+	}
+
+	public void setPhone(String phone)
+	{
+		this.phone = phone;
+	}
+
+	public String getTaxNumber()
+	{
+		return taxNumber;
+	}
+
+	public void setTaxNumber(String taxNumber)
+	{
+		this.taxNumber = taxNumber;
+	}
+
+	public String getTaxOffice()
+	{
+		return taxOffice;
+	}
+
+	public void setTaxOffice(String taxOffice)
+	{
+		this.taxOffice = taxOffice;
+	}
+
+	public String getBusinessRegistrationNumber()
+	{
+		return businessRegistrationNumber;
+	}
+
+	public void setBusinessRegistrationNumber(String businessRegistrationNumber)
+	{
+		this.businessRegistrationNumber = businessRegistrationNumber;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj)
+	{
+		if (this == obj)
+		{
+			return true;
+		}
+		if (obj == null)
+		{
+			return false;
+		}
+		if (getClass() != obj.getClass())
+		{
+			return false;
+		}
+		Apartment other = (Apartment)obj;
+		if (id == null)
+		{
+			if (other.id != null)
+			{
+				return false;
+			}
+		}
+		else if (!id.equals(other.id))
+		{
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public String toString()
+	{
+		return name;
+	}
+
+	public boolean getActive()
+	{
+		return active;
+	}
+
+	public void setActive(boolean active)
+	{
+		this.active = active;
+	}
+
+	public List<Janitor> getJanitorList()
+	{
+		return janitorList;
+	}
+
+	public void setJanitorList(List<Janitor> janitorList)
+	{
+		this.janitorList = janitorList;
+	}
+
+	public List<Receivable> getReceivableList()
+	{
+		return receivableList;
+	}
+
+	public void setReceivableList(List<Receivable> receivableList)
+	{
+		this.receivableList = receivableList;
+	}
+
+	public List<Block> getBlockList()
+	{
+		return blockList;
+	}
+
+	public void setBlockList(List<Block> blockList)
+	{
+		this.blockList = blockList;
+	}
+
+	public List<Expense> getExpenseList()
+	{
+		return expenseList;
+	}
+
+	public void setExpenseList(List<Expense> expenseList)
+	{
+		this.expenseList = expenseList;
+	}
+
+	public List<MonthBalance> getMonthBalanceList()
+	{
+		return monthBalanceList;
+	}
+
+	public void setMonthBalanceList(List<MonthBalance> monthBalanceList)
+	{
+		this.monthBalanceList = monthBalanceList;
+	}
+
+	public List<Income> getIncomeList()
+	{
+		return incomeList;
+	}
+
+	public void setIncomeList(List<Income> incomeList)
+	{
+		this.incomeList = incomeList;
+	}
+
+	public List<Contract> getContractList()
+	{
+		return contractList;
+	}
+
+	public void setContractList(List<Contract> contractList)
+	{
+		this.contractList = contractList;
+	}
+
+	public List<Dues> getDuesList()
+	{
+		return duesList;
+	}
+
+	public void setDuesList(List<Dues> duesList)
+	{
+		this.duesList = duesList;
+	}
+
+}

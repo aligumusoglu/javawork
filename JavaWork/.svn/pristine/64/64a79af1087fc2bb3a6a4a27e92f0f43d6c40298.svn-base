@@ -1,0 +1,245 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.hasanunlukilinc.sms.entities;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+/**
+ *
+ * @author gngnew
+ */
+@Entity
+@Table(name = "income")
+@NamedQueries({@NamedQuery(name = "Income.findAll", query = "SELECT i FROM Income i")})
+@SequenceGenerator(name = "seq_income_id", sequenceName = "seq_income_id", allocationSize = 1)
+public class Income extends BaseEntity implements Serializable
+{
+	private static final long		serialVersionUID	= 1L;
+	@Id
+	@Basic(optional = false)
+	@Column(name = "id")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_income_id")
+	private Long					id;
+
+	@Basic(optional = false)
+	@Column(name = "document_no")
+	private String					documentNo;
+
+	@Basic(optional = false)
+	@Column(name = "document_date")
+	@Temporal(TemporalType.DATE)
+	private Date					documentDate;
+
+	@Column(name = "definition")
+	private String					definition;
+
+	@Column(name = "total_price")
+	private Double					totalPrice;
+
+	@Column(name = "house_id")
+	private Long					houseId;
+
+	@Column(name = "apartment_id")
+	private Long					apartmentId;
+
+	@JoinColumn(name = "house_id", referencedColumnName = "id", updatable = false, insertable = false)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	private House					house;
+
+	@JoinColumn(name = "apartment_id", referencedColumnName = "id", updatable = false, insertable = false)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	private Apartment				apartment;
+
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "incomeId")
+	private List<IncomeReceivable>	incomeReceivableList;
+
+	@OneToMany(mappedBy = "incomeId")
+	private List<Receivable>		receivableList;
+
+	public Income()
+	{
+	}
+
+	public Income(Long id)
+	{
+		this.id = id;
+	}
+
+	public Income(Long id, String documentNo, Date documentDate)
+	{
+		this.id = id;
+		this.documentNo = documentNo;
+		this.documentDate = documentDate;
+	}
+
+	public Long getId()
+	{
+		return id;
+	}
+
+	public void setId(Long id)
+	{
+		this.id = id;
+	}
+
+	public String getDocumentNo()
+	{
+		return documentNo;
+	}
+
+	public void setDocumentNo(String documentNo)
+	{
+		this.documentNo = documentNo;
+	}
+
+	public Date getDocumentDate()
+	{
+		return documentDate;
+	}
+
+	public void setDocumentDate(Date documentDate)
+	{
+		this.documentDate = documentDate;
+	}
+
+	public String getDefinition()
+	{
+		return definition;
+	}
+
+	public void setDefinition(String definition)
+	{
+		this.definition = definition;
+	}
+
+	public Double getTotalPrice()
+	{
+		return totalPrice;
+	}
+
+	public void setTotalPrice(Double totalPrice)
+	{
+		this.totalPrice = totalPrice;
+	}
+
+	public List<IncomeReceivable> getIncomeReceivableList()
+	{
+		return incomeReceivableList;
+	}
+
+	public void setIncomeReceivableList(List<IncomeReceivable> incomeReceivableList)
+	{
+		this.incomeReceivableList = incomeReceivableList;
+	}
+
+	public List<Receivable> getReceivableList()
+	{
+		return receivableList;
+	}
+
+	public void setReceivableList(List<Receivable> receivableList)
+	{
+		this.receivableList = receivableList;
+	}
+
+	public Long getHouseId()
+	{
+		return houseId;
+	}
+
+	public void setHouseId(Long houseId)
+	{
+		this.houseId = houseId;
+	}
+
+	public Long getApartmentId()
+	{
+		return apartmentId;
+	}
+
+	public void setApartmentId(Long apartmentId)
+	{
+		this.apartmentId = apartmentId;
+	}
+
+	public House getHouse()
+	{
+		return house;
+	}
+
+	public void setHouse(House house)
+	{
+		this.house = house;
+	}
+
+	public Apartment getApartment()
+	{
+		return apartment;
+	}
+
+	public void setApartment(Apartment apartment)
+	{
+		this.apartment = apartment;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int hash = 0;
+		hash += (id != null ? id.hashCode() : 0);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object object)
+	{
+		// TODO: Warning - this method won't work in the case the id fields are not set
+		if (!(object instanceof Income))
+		{
+			return false;
+		}
+		Income other = (Income)object;
+		if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)))
+		{
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "com.hasanunlukilinc.sms.entities.Income[ id=" + id + " ]";
+	}
+
+	public String getAppLogMessages()
+	{
+		return "Apartman Id: " + apartmentId + " Mesken Id: " + houseId + " Belge Numarası: "
+				+ documentNo + " Belge Tarihi: " + documentDate + " Açıklama: " + definition + " Toplam Ücret: "
+				+ totalPrice;
+	}
+
+}

@@ -1,0 +1,5 @@
+package com.aligumusoglu.javawork.db;
+
+public class DbConnection {
+
+}

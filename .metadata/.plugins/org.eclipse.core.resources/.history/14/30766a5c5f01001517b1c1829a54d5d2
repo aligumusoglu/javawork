@@ -1,0 +1,120 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+<h:head>
+	<title>Java Work</title>
+	<h:outputScript name="./js/default.js" />
+	<script src='https://www.google.com/recaptcha/api.js'></script>
+
+	<style>
+.ui-widget {
+	font-size: 12px;
+}
+
+.ui-outputlabel {
+	font-weight: bold !important;
+}
+
+.ui-panelgrid td, .ui-panelgrid tr {
+	border-style: none !important;
+	padding-left: 0px;
+}
+</style>
+</h:head>
+<h:body>
+	<p:tooltip />
+	<p:growl id="growl" showDetail="true" />
+
+
+	<div style="width: 100%;" align="center">
+		<h:form id="frm" prependId="false">
+
+			<p:panel header="Kişi Listesi" style="width: 1200px;" id="userPanel">
+				<p:dataTable id="personList" widgetVar="personTable"
+					value="#{mainPageBean.userList}" var="person"
+					emptyMessage="Şahış Listesi Boş!" selectionMode="single"
+					selection="#{mainPageBean.selectedUser}" rowKey="#{person._id}"
+					filteredValue="#{mainPageBean.filteredUserList}" rows="50"
+					paginator="true"
+					paginatorTemplate="{CurrentPageReport}  {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					rowsPerPageTemplate="50,100,150">
+					<p:ajax event="rowSelect" process="@this" update=":frm:toolbar" />
+					<p:ajax event="rowUnselect" process="@this" update=":frm:toolbar" />
+
+					<p:column headerText="Adı" filterBy="#{person.name}"
+						sortBy="#{person.name}" filterMatchMode="contains">
+						<h:outputText value="#{person.name}" />
+					</p:column>
+
+					<p:column headerText="Soyadı" filterBy="#{person.surname}"
+						sortBy="#{person.surname}" filterMatchMode="contains">
+						<h:outputText value="#{person.surname}" />
+					</p:column>
+
+					<p:column headerText="Telefon" filterBy="#{person.phone}"
+						sortBy="#{person.phone}" filterMatchMode="contains">
+						<h:outputText value="#{person.phone}" />
+					</p:column>
+
+				</p:dataTable>
+			</p:panel>
+
+			<p:toolbar id="toolbar" style="width: 16%">
+				<f:facet name="right">
+					<p:commandButton value="Yeni"
+						actionListener="#{mainPageBean.newUser()}" style="width: 100px"
+						update="personList, :userFrm:grid" process="@this"
+						oncomplete="PF('userDlg').show()" />
+					<p:commandButton value="Güncelle" style="width: 100px"
+						process="@this" disabled="#{mainPageBean.selectedUser eq null}"
+						oncomplete="PF('userDlg').show()" update=":userFrm:grid" />
+					<p:commandButton value="Sil" style="width: 100px" ajax="false"
+						disabled="#{mainPageBean.selectedUser eq null}"
+						update=":frm:personList" process="@this"
+						actionListener="#{mainPageBean.delete()}"/>
+					
+				</f:facet>
+			</p:toolbar>
+		</h:form>
+
+		<h:form id="userFrm" prependId="false">
+			<p:dialog id="editUserDlg" header="Kullanıcı" widgetVar="userDlg"
+				resizable="false" modal="true" dynamic="true" closeOnEscape="true">
+
+				<h:panelGrid id="grid" columns="3" cellpadding="5">
+
+					<p:outputLabel for="txtName" value="Adı" />
+					<p:inputText id="txtName" value="#{mainPageBean.selectedUser.name}"
+						required="true" requiredMessage="Ad Boş Bırakılamaz!" />
+					<p:message for="txtName" />
+
+					<p:outputLabel for="txtSurname" value="Soyadı" />
+					<p:inputText id="txtSurname" required="true"
+						value="#{mainPageBean.selectedUser.surname}"
+						requiredMessage="Soyad Boş Bırakılamaz!" />
+					<p:message for="txtSurname" display="text" />
+
+					<p:outputLabel for="txtPhone" value="Telefon" />
+					<p:inputMask mask="(999) 999-9999" id="txtPhone"
+						value="#{mainPageBean.selectedUser.phone}" required="false" />
+					<p:message for="txtPhone" display="icon" />
+
+				</h:panelGrid>
+				<f:facet name="footer">
+					<p:captcha id="captcha" validatorMessage="Sayı uyuşmadı!" />
+					<p:commandButton value="Kaydet" update="grid :frm:personList"
+						actionListener="#{mainPageBean.save()}" process="@form"
+						ajax="true" />
+					<p:ajaxStatus onsuccess="Recaptcha.reload();" />
+				</f:facet>
+			</p:dialog>
+		</h:form>
+	</div>
+</h:body>
+</html>
+

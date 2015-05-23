@@ -1,0 +1,95 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      lang="tr">
+
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{sessionBean.setCurrentPage(3)}" />
+    </f:metadata>
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1"/>
+        <title>Site Yönetici</title>
+
+        <link href="assets/bs/css/bootstrap.min.css" rel="stylesheet"/>
+        <link href="assets/bs/css/bootstrap-theme.min.css" rel="stylesheet"/>
+        <link href="assets/style.css" rel="stylesheet"/>
+
+        <!--[if lt IE 9]>
+          <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+          <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+        <![endif]-->
+    </head>
+    <h:body>
+        <ui:composition template="./template.xhtml">
+            <ui:define name="content">
+                <div class="page-header">
+                    <form method="get" class="form pull-right">
+                        <select class="form-control">
+                            <option value="">Site Seç</option>
+                            <option>Site 1</option>
+                            <option>Site 2</option>
+                            <option>Site 3</option>
+                        </select>
+                    </form>
+                    <h3>Site Adı, Blok, Daire</h3>
+                </div>
+                <form method="get" class="form pull-right">
+                    <select class="form-control">
+                        <option value="">Yıl Seç</option>
+                        <option>2016</option>
+                        <option>2015</option>
+                        <option>2014</option>
+                    </select>
+                </form>
+                <h2>2015</h2>
+                <table class="table">
+                    <thead>
+                        <th class="col-md-1">Ay</th>
+                        <th class="col-md-9">Gider Kalemi</th>
+                        <th class="col-md-2">Tutar</th>
+                    </thead>
+                    <tr>
+                        <td><b>01</b></td>
+                        <td><b>Ocak</b></td>
+                        <td><b>8.888,88 TL</b></td>
+                    </tr>
+                    <tr class="child">
+                        <td></td>
+                        <td><small>Lorem ipsum dolor sit amet</small></td>
+                        <td><small>8.888,88 TL</small></td>
+                    </tr>
+                    <tr class="child">
+                        <td></td>
+                        <td><small>Lorem ipsum dolor sit amet</small></td>
+                        <td><small>8.888,88 TL</small></td>
+                    </tr>
+                    <tr>
+                        <td><b>02</b></td>
+                        <td><b>Şubat</b></td>
+                        <td><b>8.888,88 TL</b></td>
+                    </tr>
+                    <tr class="child">
+                        <td></td>
+                        <td><small>Lorem ipsum dolor sit amet</small></td>
+                        <td><small>8.888,88 TL</small></td>
+                    </tr>
+                    <tr class="child">
+                        <td></td>
+                        <td><small>Lorem ipsum dolor sit amet</small></td>
+                        <td><small>8.888,88 TL</small></td>
+                    </tr>
+                    <tfoot>
+                        <th class="col-md-1"></th>
+                        <th class="col-md-9"><big>Toplam</big></th>
+                        <th class="col-md-2"><big>8.888,88 TL</big></th>
+                    </tfoot>
+                </table>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

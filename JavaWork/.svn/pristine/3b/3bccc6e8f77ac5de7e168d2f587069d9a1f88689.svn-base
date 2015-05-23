@@ -1,0 +1,143 @@
+package com.hasanunlukilinc.sms.beans;
+
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
+import org.hibernate.exception.ConstraintViolationException;
+
+import com.hasanunlukilinc.sms.application.PublicResult;
+import com.hasanunlukilinc.sms.entities.Company;
+
+/**
+ * 
+ * @author hasan
+ *
+ */
+
+@ManagedBean
+@ViewScoped
+public class CompanyBean extends BaseBean
+{
+	private List<Company>	companyList;
+	private List<Company>	filterCompanyList;
+	private Company			selectedCompany;
+
+	public CompanyBean()
+	{
+
+	}
+
+	@PostConstruct
+	private void initBean()
+	{
+		fetchCompanyList();
+	}
+
+	private void fetchCompanyList()
+	{
+		filterCompanyList = null;
+		companyList = getServiceFactory().getCompanyService().getCompanyList();
+	}
+
+	public void newCompany()
+	{
+		selectedCompany = new Company();
+	}
+
+	public void save()
+	{
+		if (selectedCompany == null)
+			return;
+
+		try
+		{
+			selectedCompany.setName(toUpperCase(selectedCompany.getName()));
+			getServiceFactory().getCompanyService().saveCompany(getUserId(), getIp(), selectedCompany);
+			fetchCompanyList();
+			resetDatatableFilter(String.valueOf(selectedCompany.getId()));
+			selectedCompany = new Company();
+			hideDialog("editDlg");
+			update(":editFrm:companydt", "companyList");
+			addSavedMessage();
+
+		}
+		catch (ConstraintViolationException e)
+		{
+
+			if (e.getConstraintName().equals("unique_company_taxnumber"))
+			{
+				addErrorMessage("Vergi No : " + selectedCompany.getTaxNumber()
+						+ " daha önce başka bir firma için kullanılmış");
+			}
+			else
+			{
+				addNotSaveMessage();
+				addErrorMessage(e.getConstraintName() + " ");
+			}
+		}
+
+		catch (Exception e)
+		{
+			addNotSaveMessage();
+			addErrorMessage(e.getMessage());
+			e.printStackTrace();
+		}
+		finally
+		{
+			updateGrowl();
+		}
+
+	}
+
+	public void delete()
+	{
+		if (selectedCompany == null)
+			return;
+
+		PublicResult result = getServiceFactory().getCompanyService().deleteCompany(getUserId(), getIp(),
+				selectedCompany.getId());
+		if (result == PublicResult.SUCCESS)
+		{
+			fetchCompanyList();
+			selectedCompany = new Company();
+			update("companyList", "growl");
+			addDeletedMessage();
+		}
+		else
+			addNotDeletedMessage();
+	}
+
+	public List<Company> getCompanyList()
+	{
+		return companyList;
+	}
+
+	public void setCompanyList(List<Company> companyList)
+	{
+		this.companyList = companyList;
+	}
+
+	public Company getSelectedCompany()
+	{
+		return selectedCompany;
+	}
+
+	public void setSelectedCompany(Company selectedCompany)
+	{
+		this.selectedCompany = selectedCompany;
+	}
+
+	public List<Company> getFilterCompanyList()
+	{
+		return filterCompanyList;
+	}
+
+	public void setFilterCompanyList(List<Company> filterCompanyList)
+	{
+		this.filterCompanyList = filterCompanyList;
+	}
+
+}

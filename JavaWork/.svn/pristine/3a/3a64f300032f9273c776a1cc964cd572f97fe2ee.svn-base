@@ -1,0 +1,195 @@
+package com.hasanunlukilinc.sms.services;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
+import org.joda.time.DateTime;
+import org.joda.time.Period;
+import org.joda.time.PeriodType;
+
+import com.hasanunlukilinc.sms.entities.House;
+import com.hasanunlukilinc.sms.entities.Receivable;
+
+class IncomeServiceImpl extends BaseService implements IncomeService
+{
+	Logger	log	= Logger.getLogger(IncomeServiceImpl.class);
+	
+	@Override
+	public List<Receivable> fetchReceivableListByHouseId(House house)
+	{
+		List<Receivable> receivableList = new ArrayList<Receivable>();
+
+		try
+		{
+			receivableList = getDaoFactory().getReceivableDao().fetchReceivablesByHouseId(house.getId());
+
+			for (Receivable receivable : receivableList)
+			{
+				receivable.setRemainingDebt(receivable.getPrice() - receivable.getPaidPrice());
+				Hibernate.initialize(receivable.getApartment());
+				Hibernate.initialize(receivable.getHouse());
+				Hibernate.initialize(receivable.getHouse().getBlock());
+				Hibernate.initialize(receivable.getHouse().getLandlord());
+				Hibernate.initialize(receivable.getHouse().getTenant());
+			}
+
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			log.error("failed!", e);
+		}
+		finally
+		{
+			closeSession();
+		}
+
+		return receivableList;
+	}
+	
+	@Override
+	public List<Receivable> fetchReceivableListByHouseIdAndYear(House house, Integer year)
+	{
+		List<Receivable> receivableList = new ArrayList<Receivable>();
+
+		try
+		{
+			receivableList = getDaoFactory().getReceivableDao().fetchReceivablesByHouseIdAndYear(house.getId(), year);
+
+			for (Receivable receivable : receivableList)
+			{
+				receivable.setRemainingDebt(receivable.getPrice() - receivable.getPaidPrice());
+				Hibernate.initialize(receivable.getServiceType());
+				Hibernate.initialize(receivable.getExtraDues());
+				Hibernate.initialize(receivable.getApartment());
+				Hibernate.initialize(receivable.getHouse());
+				Hibernate.initialize(receivable.getHouse().getBlock());
+				Hibernate.initialize(receivable.getHouse().getLandlord());
+				Hibernate.initialize(receivable.getHouse().getTenant());
+			}
+
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			log.error("failed!", e);
+		}
+		finally
+		{
+			closeSession();
+		}
+
+		return calculeInterestOnReceivableList(receivableList);
+	}
+	
+	@Override
+	public List<Receivable> fetchDebtListMonthly(Long houseId, Integer month,Integer year) 
+	{
+		List<Receivable>    receivableList  = new ArrayList<Receivable>();
+		try
+		{
+			receivableList 		= getDaoFactory().getReceivableDao().fetchDebtListMonthly(houseId, month, year);
+			for (Receivable rec : receivableList)
+			{
+				Hibernate.initialize(rec.getHouse());
+				Hibernate.initialize(rec.getHouse().getBlock());
+				Hibernate.initialize(rec.getDues());
+				Hibernate.initialize(rec.getExtraDues());
+				
+			}
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			log.error("failed!", e);
+		}
+		finally
+		{
+			closeSession();
+		}
+		
+		return calculeInterestOnReceivableList(receivableList);
+		
+	}
+	
+	@Override
+	public List<Receivable> calculeInterestOnReceivableList(List<Receivable> receivableList)
+	{
+		try
+		{
+			double interestRate = 0.0;
+			int totalInterestApplied = 0;
+			for (Receivable receivable : receivableList)
+			{
+
+				try
+				{
+					if(receivable.getDuesId() != null && receivable.getDuesId() > 0)
+					interestRate = getDaoFactory().getOverdueInterestDao().getOverdueInterestRate(
+							receivableList.get(0).getPeriod());
+					else
+						interestRate = receivable.getExtraDues().getInterestRate();
+				}
+				catch (Exception e)
+				{
+					e.printStackTrace();
+				}
+
+				totalInterestApplied = getTotalInterestApplied(receivable.getPeriod());
+				if (totalInterestApplied > 0)
+				{
+					Double totalInterestPrice = 0.0;
+					if (interestRate > 0)
+					{
+						receivable.setInterestRate(interestRate);
+
+						for (int i = 0; i < totalInterestApplied; i++)
+						{
+							totalInterestPrice += receivable.getPrice() * interestRate;
+						}
+					}
+					receivable.setInterestPrice(receivable.getRemainingDebt() + totalInterestPrice);
+				}
+				else
+					receivable.setInterestPrice(receivable.getRemainingDebt());
+			}
+
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			log.error("failed!", e);
+		}
+		finally
+		{
+			closeSession();
+		}
+
+		return receivableList;
+	}
+
+	//Verilen tarihe  uygulanacak faiz sayısını belirtir
+//	private int getTotalInterestApplied(Date receivableDate)
+//	{
+//		DateTime dateTime = new DateTime();
+//		DateTime receivableDateTime = new DateTime(receivableDate.getTime());
+//		return (dateTime.getMonthOfYear() - receivableDateTime.getMonthOfYear()) >= 2 ? ((dateTime.getMonthOfYear() - receivableDateTime
+//				.getMonthOfYear()) - 1) : 0;
+//	}
+	
+	private int getTotalInterestApplied(Date receivableDate)
+	{
+		DateTime start = new DateTime(receivableDate.getTime());
+		Period p = new Period(start, new DateTime(), PeriodType.months().withDaysRemoved());
+		//Verilen tarihe  uygulanacak faiz sayısını belirtir
+		int months = p.getMonths();
+		System.out.println("Geçen ay sayısı: " + months);
+		return months >= 2 ? months-1 : 0;
+	}
+
+	
+	
+}

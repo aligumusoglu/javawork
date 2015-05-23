@@ -1,0 +1,60 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.hasanunlukilinc.sms.application;
+
+/**
+ *
+ * @author gngnew
+ */
+public enum ProcessType
+{
+	/*1:user 
+	2:person 
+	3:company 
+	4:apartment 
+	5:block 
+	6:house 
+	7:janitor 
+	8:service_type
+	9:income 
+	10:receivable 
+	11:expenses';*/
+	USER(1, "Kullanıcı"), PERSON(2, "Şahıs"), COMPANY(3, "Firma"), APARTMENT(4, "Apartman"), BLOCK(5, "Blok"), HOUSE(6,
+			"Mesken"), JANITOR(7, "Hizmetli"), SERVICE_TYPE(8, "Hizmet Türü"), INCOME(9, "Gelir"), RECEIVABLE(10,
+			"Alacak"), EXPENSES(11, "Borç");
+
+	private int		type;
+	private String	typeName;
+
+	private ProcessType(int type, String typeName)
+	{
+		this.type = type;
+		this.typeName = typeName;
+	}
+
+	public static ProcessType find(int type)
+	{
+		for (ProcessType ht : values())
+		{
+			if (ht.type == type)
+			{
+				return ht;
+			}
+		}
+		return null;
+	}
+
+	public int getType()
+	{
+		return type;
+	}
+
+	public String getTypeName()
+	{
+		return typeName;
+	}
+
+}

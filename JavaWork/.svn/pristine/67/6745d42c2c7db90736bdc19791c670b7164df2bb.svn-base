@@ -1,0 +1,78 @@
+package com.hasanunlukilinc.sms.beans;
+
+import com.hasanunlukilinc.sms.entities.House;
+import com.hasanunlukilinc.sms.entities.Person;
+import com.hasanunlukilinc.sms.entities.User;
+import java.util.List;
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.context.FacesContext;
+import javax.faces.view.ViewScoped;
+
+/**
+ *
+ * @author Gungor Akbiyik <gungor.akbiyik at gmail.com>
+ */
+@ManagedBean
+@ViewScoped
+public class LoginBean extends BaseBean {
+
+    private String username;
+    private String password;
+
+    public LoginBean() {
+    }
+
+    @PostConstruct
+    private void initBean() {
+		// check login
+        // eger login ise kullaniciyi ana sayfaya yonlendirir
+        if (getSessionBean().getPerson() != null) {
+            try {
+                FacesContext.getCurrentInstance().getExternalContext().redirect("anasayfa.xhtml");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="actions">
+    public String login() {
+        try {
+            Person userData = null;
+            boolean isSuccess = true;
+            userData = getServiceFactory().getPersonService().loginPerson(username, password);
+            // check user
+            if (userData != null && userData.getId() > 0) {
+                getSessionBean().setPerson(userData);
+                List<House> houseList = getServiceFactory().getBuildingsService().fetchPersonsHouse(userData.getId());
+                getSessionBean().setHouseList(houseList);
+                return "anasayfa.xhtml?faces-redirect=true";
+            } else {
+                addErrorMessage("Kullanıcı adını veya parolayı yanlış girdiniz.");
+            }
+        } catch (Throwable t) {
+            addErrorMessage("yanlis kullanici adi veya sifre");
+            t.printStackTrace();
+        }
+        return null;
+    }
+    // </editor-fold>
+
+}

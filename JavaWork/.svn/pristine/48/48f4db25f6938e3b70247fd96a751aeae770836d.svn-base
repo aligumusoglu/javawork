@@ -1,0 +1,79 @@
+package com.hasanunlukilinc.sms.services;
+
+import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import com.hasanunlukilinc.sms.application.ProcessType;
+import com.hasanunlukilinc.sms.entities.AppLog;
+
+/**
+ * 
+ * @author hasan
+ *
+ */
+class AppLogServiceImpl extends BaseService implements AppLogService
+{
+
+	private Logger	log	= Logger.getLogger(AppLogServiceImpl.class);
+
+	public AppLogServiceImpl()
+	{
+	}
+
+	@Override
+	public void saveAppLog(ProcessType processType, String definition, Long userId)
+	{
+		try
+		{
+			beginTransaction();
+			AppLog appLog = new AppLog();
+
+			//appLog.setUserId(userId);
+
+			getDaoFactory().getAppLogDao().merge(appLog);
+			commitTransaction();
+		}
+		catch (Exception e)
+		{
+			rollback();
+			log.error("failed!", e);
+		}
+		finally
+		{
+			closeSession();
+		}
+
+	}
+
+	@Override
+	public List<AppLog> getAppLogList()
+	{
+		List<AppLog> appLogList = new ArrayList<AppLog>();
+		try
+		{
+			appLogList = getDaoFactory().getAppLogDao().findAll();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			log.error("failed!", e);
+		}
+		finally
+		{
+			closeSession();
+		}
+		return appLogList;
+	}
+
+	@Override
+	public List<AppLog> getAppLogListBySearch(ProcessType processType, Timestamp firstDate, Timestamp secondDate,
+			Long userId)
+	{
+		// VTODO Auto-generated method stub
+		return null;
+	}
+
+}

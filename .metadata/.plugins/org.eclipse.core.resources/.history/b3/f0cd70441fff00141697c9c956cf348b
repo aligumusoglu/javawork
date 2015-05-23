@@ -1,0 +1,5 @@
+package com.aligumusoglu.javawork.dao;
+
+public class DbConnection {
+
+}

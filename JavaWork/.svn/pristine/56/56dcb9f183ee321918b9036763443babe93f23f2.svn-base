@@ -1,0 +1,93 @@
+package com.hasanunlukilinc.sms.services;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+
+import com.hasanunlukilinc.sms.dao.DaoFactory;
+import com.hasanunlukilinc.sms.util.HibernateUtil;
+
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
+/**
+ *
+ * @author gngnew
+ */
+public class BaseService implements SessionProvider
+{
+
+	protected Session		session;
+	protected Transaction	tr;
+	private DaoFactory		daoFactory;
+
+	public BaseService()
+	{
+	}
+
+	@Override
+	public Session getSession()
+	{
+		if (session == null)
+		{
+			session = HibernateUtil.openSession();
+		}
+		return session;
+	}
+
+	public void closeSession()
+	{
+		HibernateUtil.closeSession(session);
+		session = null;
+	}
+
+	public void beginTransaction()
+	{
+		tr = getSession().getTransaction();
+		tr.begin();
+	}
+
+	public void commitTransaction()
+	{
+		tr.commit();
+	}
+
+	public void rollback()
+	{
+		tr.rollback();
+	}
+
+	public DaoFactory getDaoFactory()
+	{
+		if (daoFactory == null)
+		{
+			daoFactory = new DaoFactory(this);
+		}
+		return daoFactory;
+	}
+
+	public Date getFirstDayMonth(Date date)
+	{
+		DateTime cacheTime = new DateTime(date.getTime());
+		DateTimeFormatter format = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm:ss");
+		DateTime time = format.parseDateTime("01/" + cacheTime.getMonthOfYear() + "/" + cacheTime.getYearOfEra()
+				+ " 00:00:00");
+		return new Date(time.getMillis());
+	}
+	
+	/**
+	 * ÖRNEK MMMM (Şubat)
+	 * @param date
+	 * @param format
+	 * @return
+	 */
+	public String getDateDisplay(Date date, String format)
+	{
+		SimpleDateFormat sdf = new SimpleDateFormat(format, new Locale("tr"));
+		return sdf.format(date);
+	}
+
+}

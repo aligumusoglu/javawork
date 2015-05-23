@@ -1,0 +1,262 @@
+package com.hasanunlukilinc.sms.services;
+
+import java.io.ByteArrayOutputStream;
+import java.net.URL;
+import java.net.URLDecoder;
+import java.sql.Connection;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.export.JRPdfExporter;
+
+import org.apache.log4j.Logger;
+import org.hibernate.internal.SessionImpl;
+
+import com.hasanunlukilinc.sms.entities.Expense;
+import com.hasanunlukilinc.sms.entities.Info;
+import com.hasanunlukilinc.sms.entities.MonthBalance;
+import com.hasanunlukilinc.sms.entities.MonthBalanceReport;
+
+class ReportServiceImlp extends BaseService implements ReportService
+{
+
+	private Logger			log				= Logger.getLogger(ReportServiceImlp.class);
+	JasperReport			jasperReport	= null;
+	JasperPrint				jasperPrint		= null;
+	HashMap<String, Object>	jasperParameter	= null;
+	String					jrxmlSource;
+	Connection				connection;
+
+	
+	public void createPdf(ByteArrayOutputStream outputStream)
+	{
+		try
+		{
+			JRPdfExporter exporter = new JRPdfExporter();
+			exporter.setParameter(JRExporterParameter.JASPER_PRINT, jasperPrint);
+			exporter.setParameter(JRExporterParameter.OUTPUT_STREAM, outputStream);
+			exporter.exportReport();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			log.error("failed!", e);
+		}
+	}
+
+
+	@Override
+	public void getBalanceByApartmentId(Long apartmentId, String apartmentName, Date firstDate, Date secondDate, boolean detailedReport)
+	{
+		try
+		{
+			MonthBalance monthBalance = getDaoFactory().getMonthBalanceDao().getMonthBalanceByApartmentId(apartmentId,
+					getFirstDayMonth(firstDate));
+
+			List<Info> info = getDaoFactory().getInfoDao().findAll();
+
+			if (monthBalance != null)
+			{
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(firstDate);
+				calendar.add(Calendar.MONTH, -1);
+				Date oldDate = calendar.getTime();
+				oldDate = getFirstDayMonth(oldDate);
+
+				MonthBalance oldMonthBalance = getDaoFactory().getMonthBalanceDao().getMonthBalanceByApartmentId(
+						apartmentId, oldDate);
+
+				Double oldBalance = 0.0;
+				if (oldMonthBalance != null)
+				{
+					oldBalance = oldMonthBalance.getBalance();
+				}
+
+				Double dues = 0.0;
+				Double extraDues = 0.0;
+				dues = getDaoFactory().getIncomeReceivableDao().getTotalReceivableByApartmentIdByDateByServiceTypeId(
+						apartmentId, firstDate, secondDate, Long.valueOf(1));
+				extraDues = getDaoFactory().getIncomeReceivableDao()
+						.getTotalReceivableByApartmentIdByDateByServiceTypeId(apartmentId, firstDate, secondDate,
+								Long.valueOf(2));
+
+				if (dues == null)
+					dues = 0.0;
+				if (extraDues == null)
+					extraDues = 0.0;
+
+				StringBuilder subTitle = new StringBuilder();
+				subTitle.append(getDateDisplay(firstDate, "dd/MM/yyyy"));
+				subTitle.append(" - ");
+				subTitle.append(getDateDisplay(secondDate, "dd/MM/yyyy") + " " + apartmentName + " GELİR GİDER TABLOSU");
+
+				//Parametre Listesi için gerekli HashMap
+				jasperParameter = new HashMap<String, Object>();
+				/**
+				 * Burada parametre eklenecek Ör: jasperParameter.put("parametdeAdi",parametreDegeri);
+				 * jasperParameter.put("kurulus",1923);
+				 */
+				jasperParameter.put("dues", dues);
+				jasperParameter.put("extra_dues", extraDues);
+				jasperParameter.put("sub_title", subTitle);
+				jasperParameter.put("apartment_id", apartmentId);
+				jasperParameter.put("author_name", info.get(0).getName());
+				jasperParameter.put("month_name", getDateDisplay(firstDate, "MMMM"));
+				jasperParameter.put("old_month_name", getDateDisplay(oldDate, "MMMM"));
+				jasperParameter.put("old_balance", oldBalance);
+				jasperParameter.put("apartment_name", apartmentName);
+				jasperParameter.put("first_date", firstDate);
+				jasperParameter.put("second_date", secondDate);
+				
+				//JRXML  dosyasını gösterdiğimiz kaynaktan okuyoruz.
+				if(detailedReport)
+				{
+					URL subreportURL = ReportServiceImlp.class.getResource("/jrxml-template/");
+					String subreportPath = URLDecoder.decode(subreportURL.getPath(), "UTF-8");
+					jasperParameter.put("SUBREPORT_DIR", subreportPath);
+					jasperReport = JasperCompileManager.compileReport(ReportServiceImlp.class
+							.getResourceAsStream("/jrxml-template/detailed-income-month-balance.jrxml"));
+				}
+				else
+					jasperReport = JasperCompileManager.compileReport(ReportServiceImlp.class
+							.getResourceAsStream("/jrxml-template/month-balance.jrxml"));
+
+				//Raporun işlenmesi için jrxmli, para metreler ve raporlanacak liste gönderiyoruz
+				jasperPrint = JasperFillManager.fillReport(jasperReport, jasperParameter,
+						((SessionImpl)getSession()).connection());
+			}
+
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			log.error("failed!", e);
+		}
+		finally
+		{
+			closeSession();
+		}
+	}
+	
+	@Override
+	public MonthBalanceReport getBalanceByApartmentId(Long apartmentId, Date firstDate, Date secondDate)
+	{
+		MonthBalanceReport monthBalanceReport = null;
+		try
+		{
+			MonthBalance monthBalance = getDaoFactory().getMonthBalanceDao().getMonthBalanceByApartmentId(apartmentId,
+					getFirstDayMonth(firstDate));
+
+			List<Info> info = getDaoFactory().getInfoDao().findAll();
+			List<Expense> expenseList = getDaoFactory().getExpenseDao().fetchExpenseListBetweenDates(apartmentId, firstDate, secondDate);
+			if (monthBalance != null)
+			{
+				monthBalanceReport = new MonthBalanceReport();
+				monthBalanceReport.setExpenses(expenseList);
+				
+				Calendar calendar = Calendar.getInstance();
+				calendar.setTime(firstDate);
+				calendar.add(Calendar.MONTH, -1);
+				Date oldDate = calendar.getTime();
+				oldDate = getFirstDayMonth(oldDate);
+
+				MonthBalance oldMonthBalance = getDaoFactory().getMonthBalanceDao().getMonthBalanceByApartmentId(
+						apartmentId, oldDate);
+
+				Double oldBalance = 0.0;
+				if (oldMonthBalance != null)
+				{
+					oldBalance = oldMonthBalance.getBalance();
+				}
+
+				Double dues = 0.0;
+				Double extraDues = 0.0;
+				dues = getDaoFactory().getIncomeReceivableDao().getTotalReceivableByApartmentIdByDateByServiceTypeId(
+						apartmentId, firstDate, secondDate, Long.valueOf(1));
+				extraDues = getDaoFactory().getIncomeReceivableDao()
+						.getTotalReceivableByApartmentIdByDateByServiceTypeId(apartmentId, firstDate, secondDate,
+								Long.valueOf(2));
+
+				if (dues == null)
+					dues = 0.0;
+				if (extraDues == null)
+					extraDues = 0.0;
+				
+				monthBalanceReport.setAuthorName(info.get(0).getName());
+				monthBalanceReport.setDues(dues);
+				monthBalanceReport.setExtraDues(extraDues);
+				monthBalanceReport.setMonthName(getDateDisplay(firstDate, "MMMM"));
+				monthBalanceReport.setOldBalance(oldBalance);
+				monthBalanceReport.setOldMonthName(getDateDisplay(oldDate, "MMMM"));
+			}
+
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			log.error("failed!", e);
+		}
+		finally
+		{
+			closeSession();
+		}
+		
+		return monthBalanceReport;
+	}
+
+
+	@Override
+	public void getExpenseListByApartmentId(Long apartmentId,
+			String apartmentName, Date firstDate, Date secondDate) {
+
+		try
+		{
+			StringBuilder subTitle = new StringBuilder();
+			subTitle.append(apartmentName + " (");
+			subTitle.append(getDateDisplay(firstDate, "dd.MM.yyyy"));
+			subTitle.append(" - ");
+			subTitle.append(getDateDisplay(secondDate, "dd.MM.yyyy") + ")");
+			List<Info> info = getDaoFactory().getInfoDao().findAll();
+			//Parametre Listesi için gerekli HashMap
+			jasperParameter = new HashMap<String, Object>();
+			/**
+			 * Burada parametre eklenecek Ör: jasperParameter.put("parametdeAdi",parametreDegeri);
+			 * jasperParameter.put("kurulus",1923);
+			 */
+
+			jasperParameter.put("sub_title", subTitle);
+			jasperParameter.put("first_date", firstDate);
+			jasperParameter.put("second_date", secondDate);
+			jasperParameter.put("apartment_id", apartmentId);
+			jasperParameter.put("author_name", info.get(0).getName());
+
+			//JRXML  dosyasını gösterdiğimiz kaynaktan okuyoruz.
+			jasperReport = JasperCompileManager.compileReport(ReportServiceImlp.class
+					.getResourceAsStream("/jrxml-template/expense-list.jrxml"));
+
+			//Raporun işlenmesi için jrxmli, para metreler ve raporlanacak liste gönderiyoruz
+			jasperPrint = JasperFillManager.fillReport(jasperReport, jasperParameter,
+					((SessionImpl)getSession()).connection());
+
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			log.error("failed!", e);
+		}
+		finally
+		{
+			closeSession();
+		}
+	}
+
+
+
+}

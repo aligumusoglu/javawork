@@ -1,0 +1,205 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.hasanunlukilinc.sms.entities;
+
+import java.io.Serializable;
+import java.util.List;
+
+import javax.persistence.Basic;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+/**
+ *
+ * @author gngnew
+ * @author hasan
+ */
+@Entity
+@Table(name = "company")
+@NamedQueries({@NamedQuery(name = "Company.findAll", query = "SELECT c FROM Company c")})
+@SequenceGenerator(name = "seq_company_id", sequenceName = "seq_company_id", allocationSize = 1)
+public class Company extends BaseEntity implements Serializable
+{
+	private static final long	serialVersionUID	= 1L;
+	@Id
+	@Basic(optional = false)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_company_id")
+	@Column(name = "id")
+	private Long				id;
+
+	@Basic(optional = false)
+	@Column(name = "name")
+	private String				name;
+
+	@Basic(optional = false)
+	@Column(name = "tax_number")
+	private String				taxNumber;
+
+	@Basic(optional = false)
+	@Column(name = "tax_office")
+	private String				taxOffice;
+
+	@Column(name = "address")
+	private String				address;
+
+	@Column(name = "phone")
+	private String				phone;
+
+	@Column(name = "mail")
+	private String				mail;
+
+	@Column(name = "web")
+	private String				web;
+	@OneToMany(cascade = CascadeType.ALL, mappedBy = "companyId")
+	private List<Expense>		expenseList;
+
+	public Company()
+	{
+	}
+
+	public Company(Long id)
+	{
+		this.id = id;
+	}
+
+	public Company(Long id, String name, String taxNumber, String taxOffice)
+	{
+		this.id = id;
+		this.name = name;
+		this.taxNumber = taxNumber;
+		this.taxOffice = taxOffice;
+	}
+
+	public Long getId()
+	{
+		return id;
+	}
+
+	public void setId(Long id)
+	{
+		this.id = id;
+	}
+
+	public String getName()
+	{
+		return name;
+	}
+
+	public void setName(String name)
+	{
+		this.name = name;
+	}
+
+	public String getTaxNumber()
+	{
+		return taxNumber;
+	}
+
+	public void setTaxNumber(String taxNumber)
+	{
+		this.taxNumber = taxNumber;
+	}
+
+	public String getTaxOffice()
+	{
+		return taxOffice;
+	}
+
+	public void setTaxOffice(String taxOffice)
+	{
+		this.taxOffice = taxOffice;
+	}
+
+	public String getAddress()
+	{
+		return address;
+	}
+
+	public void setAddress(String address)
+	{
+		this.address = address;
+	}
+
+	public String getPhone()
+	{
+		return phone;
+	}
+
+	public void setPhone(String phone)
+	{
+		this.phone = phone;
+	}
+
+	public String getMail()
+	{
+		return mail;
+	}
+
+	public void setMail(String mail)
+	{
+		this.mail = mail;
+	}
+
+	public String getWeb()
+	{
+		return web;
+	}
+
+	public void setWeb(String web)
+	{
+		this.web = web;
+	}
+
+	public List<Expense> getExpenseList()
+	{
+		return expenseList;
+	}
+
+	public void setExpenseList(List<Expense> expenseList)
+	{
+		this.expenseList = expenseList;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int hash = 0;
+		hash += (id != null ? id.hashCode() : 0);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object object)
+	{
+		// TODO: Warning - this method won't work in the case the id fields are not set
+		if (!(object instanceof Company))
+		{
+			return false;
+		}
+		Company other = (Company)object;
+		if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)))
+		{
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public String toString()
+	{
+		return name;
+	}
+
+}

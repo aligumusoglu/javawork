@@ -1,0 +1,87 @@
+package com.hasanunlukilinc.sms.services;
+
+import java.io.Serializable;
+
+/**
+ *
+ * @author gngnew
+ */
+public class ServiceFactory implements Serializable
+{
+
+	private static final long serialVersionUID = 1L;
+	private UserService			userService;
+	private BuildingsService	buildingsService;
+	private CompanyService		companyService;
+	private PersonService		personService;
+	private	IncomeService		incomeService;
+	private ServiceTypeService	serviceTypeService;
+	private ExpenseService		expenseService;
+	private DuesService			duesService;
+	private ReportService		reportService;
+	private ReportPermissionService	reportPermissionService;
+	
+	public ServiceFactory()
+	{
+	}
+
+	public UserService getUserService()
+	{
+		if (userService == null)
+		{
+			userService = new UserServiceImpl();
+		}
+		return userService;
+	}
+
+	public BuildingsService getBuildingsService()
+	{
+		if (buildingsService == null)
+		{
+			buildingsService = new BuildingServiceImpl();
+		}
+		return buildingsService;
+	}
+
+	public CompanyService getCompanyService()
+	{
+		if (companyService == null)
+			companyService = new CompanyServiceImpl();
+		return companyService;
+	}
+	
+	public IncomeService getIncomeService()
+	{
+		if (incomeService == null)
+			incomeService = new IncomeServiceImpl();
+		return incomeService;
+	}
+
+	public PersonService getPersonService()
+	{
+		if (personService == null)
+			personService = new PersonServiceImpl();
+		return personService;
+	}
+
+	public ServiceTypeService getServiceTypeService()
+	{
+		if (serviceTypeService == null)
+			serviceTypeService = new ServiceTypeServiceImpl();
+		return serviceTypeService;
+	}
+	
+	public ReportService getReportService()
+	{
+		if (reportService == null)
+			reportService = new ReportServiceImlp();
+		return reportService;
+	}
+
+	public ReportPermissionService getReportPermissionService()
+	{
+		if (reportPermissionService == null)
+			reportPermissionService = new ReportPermissionServiceImpl();
+		return reportPermissionService;
+	}
+}

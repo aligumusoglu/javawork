@@ -1,0 +1,19 @@
+package com.hasanunlukilinc.sms.beans;
+
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
+import com.hasanunlukilinc.sms.entities.House;
+
+@ManagedBean
+@ViewScoped
+public class HouseBean extends BaseBean {
+	
+	public String onClickDebtDetails(House selectedHouse)
+	{
+		System.out.println(selectedHouse.getHouseNumber());
+		getSessionBean().setSelectedHouse(selectedHouse);
+		return "borclar.xhtml?faces-redirect=true";
+	}
+
+}

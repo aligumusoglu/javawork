@@ -1,0 +1,27 @@
+package com.hasanunlukilinc.sms.services;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.util.Date;
+import java.util.List;
+
+import com.hasanunlukilinc.sms.entities.House;
+import com.hasanunlukilinc.sms.entities.MonthBalanceReport;
+import com.hasanunlukilinc.sms.entities.Receivable;
+
+public interface ReportService
+{
+
+	public void createPdf(ByteArrayOutputStream outputStream);
+
+	//Aylık Bilanço Raporu
+	public void getBalanceByApartmentId(Long apartmentId,String apartmentName,Date firstDate,Date secondDate, boolean detailedReport);
+	
+	//Html Sayfasında Görüntülenecek Nesne
+	public MonthBalanceReport getBalanceByApartmentId(Long apartmentId, Date firstDate,Date secondDate);
+
+	//Gider Listesi
+	public void getExpenseListByApartmentId(Long apartmentId,String apartmentName,Date firstDate, Date secondDate);
+
+	
+}

@@ -1,0 +1,8 @@
+package com.aligumusoglu.javawork.model;
+
+public class AppLog {
+
+	private Integer appLogType;
+	
+	
+}

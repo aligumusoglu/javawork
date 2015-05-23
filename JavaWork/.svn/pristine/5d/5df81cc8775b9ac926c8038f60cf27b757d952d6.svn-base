@@ -1,0 +1,147 @@
+package com.hasanunlukilinc.sms.beans;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
+import org.joda.time.DateTime;
+import org.primefaces.model.DefaultStreamedContent;
+
+import com.hasanunlukilinc.sms.entities.Apartment;
+import com.hasanunlukilinc.sms.services.ReportService;
+
+
+@ManagedBean(name = "reportBean")
+@ViewScoped
+public class ReportBean extends BaseBean
+{
+
+	private static final long	serialVersionUID	= 1L;
+
+	private Date			firstDate, secondDate;
+
+	private Apartment		selectedApartment;
+	private String			subTitle;
+
+	private int				selectedYear;
+	private int				selectedMonth;
+	private List<Integer>	years 		  = new ArrayList<Integer>();
+	ByteArrayOutputStream	byteArrayOutputStream;
+	ReportService			reportService;
+	InputStream				inputStream;
+
+	public ReportBean()
+	{
+	}
+
+	@PostConstruct
+	private void initBean()
+	{
+		initYears();
+	}
+
+
+	
+	private void initYears()
+	{
+		DateTime datetime = new DateTime();
+		int currentYear = Integer.parseInt(datetime.toString("yyyy"));
+		years.add(currentYear);
+		while(years.size() < 6)
+		{
+			currentYear -= 1;
+			years.add(currentYear);
+		}
+		selectedYear = years.get(0);
+	}
+
+//	public void createExpenseListReport()
+//	{
+//		try
+//		{
+//			byteArrayOutputStream = new ByteArrayOutputStream();
+//			reportService = getServiceFactory().getReportService();
+//			reportService.getExpenseListByApartmentId(selectedApartment.getId(), selectedApartment.getName(),
+//					firstDate, secondDate);
+//			reportService.createPdf(byteArrayOutputStream);
+//			inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+//			setStreamedContent(new DefaultStreamedContent(inputStream, "application/pdf", "gider-listesi.pdf"));
+//		}
+//		catch (Exception e)
+//		{
+//			e.printStackTrace();
+//		}
+//	}
+
+
+	public Date getFirstDate()
+	{
+		return firstDate;
+	}
+
+	public void setFirstDate(Date firstDate)
+	{
+		this.firstDate = firstDate;
+	}
+
+	public Date getSecondDate()
+	{
+		return secondDate;
+	}
+
+	public void setSecondDate(Date secondDate)
+	{
+		this.secondDate = secondDate;
+	}
+
+	public Apartment getSelectedApartment()
+	{
+		return selectedApartment;
+	}
+
+	public void setSelectedApartment(Apartment selectedApartment)
+	{
+		this.selectedApartment = selectedApartment;
+	}
+
+	public String getSubTitle()
+	{
+		return subTitle;
+	}
+
+	public void setSubTitle(String subTitle)
+	{
+		this.subTitle = subTitle;
+	}
+
+	public int getSelectedYear() {
+		return selectedYear;
+	}
+	
+	public void setSelectedYear(int selectedYear) {
+		this.selectedYear = selectedYear;
+	}
+	
+	public int getSelectedMonth() {
+		return selectedMonth;
+	}
+	public void setSelectedMonth(int selectedMonth) {
+		this.selectedMonth = selectedMonth;
+	}
+	
+	public List<Integer> getYears() {
+		return years;
+	}
+	
+	public void setYears(List<Integer> years) {
+		this.years = years;
+	}
+	
+}

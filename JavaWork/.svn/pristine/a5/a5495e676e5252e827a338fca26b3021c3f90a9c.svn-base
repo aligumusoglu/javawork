@@ -1,0 +1,43 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.hasanunlukilinc.sms.application;
+
+/**
+ *
+ * @author gngnew
+ */
+public enum HouseType {
+    
+    OFFICE(1, "Ofis"),
+    HOUSE(2, "Ev");
+    
+    private int type;
+    private String typeName;
+
+    private HouseType(int type, String typeName) {
+        this.type = type;
+        this.typeName = typeName;
+    }
+    
+    public static HouseType find(int type) {
+        for (HouseType ht : values()) {
+            if (ht.type == type) {
+                return ht;
+            }
+        }
+        return null;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public String getTypeName() {
+        return typeName;
+    }
+
+    
+}

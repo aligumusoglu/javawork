@@ -1,0 +1,219 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.hasanunlukilinc.sms.services;
+
+import com.hasanunlukilinc.sms.entities.Apartment;
+import com.hasanunlukilinc.sms.entities.Block;
+import com.hasanunlukilinc.sms.entities.Contract;
+import com.hasanunlukilinc.sms.entities.House;
+import com.hasanunlukilinc.sms.util.HibernateUtil;
+import java.util.List;
+import org.apache.log4j.Logger;
+import org.hibernate.Hibernate;
+import org.hibernate.Query;
+import org.hibernate.Session;
+
+/**
+ *
+ * @author gngnew
+ */
+public class BuildingServiceImpl extends BaseService implements BuildingsService {
+
+    private final Logger log = Logger.getLogger(BuildingServiceImpl.class);
+
+    @Override
+    public List<Apartment> fetchApartments() {
+        List<Apartment> data = null;
+
+        try {
+            data = getDaoFactory().getApartmentDao().findAll();
+        } catch (Exception e) {
+            log.error(e, e);
+        } finally {
+            closeSession();
+        }
+
+        return data;
+    }
+
+    @Override
+    public List<Apartment> fetchActiveApartments() {
+        List<Apartment> data = null;
+
+        try {
+            data = getDaoFactory().getApartmentDao().getActiveApartmentList();
+        } catch (Exception e) {
+            log.error(e, e);
+        } finally {
+            closeSession();
+        }
+
+        return data;
+    }
+
+    @Override
+    public void saveApartment(Apartment selectedApartment) {
+        try {
+            beginTransaction();
+            getDaoFactory().getApartmentDao().merge(selectedApartment);
+            commitTransaction();
+        } catch (Exception e) {
+            rollback();
+            log.error(e, e);
+            throw e;
+        } finally {
+            closeSession();
+        }
+    }
+
+    @Override
+    public void fetchBlocks(Apartment apt) {
+        Session sess = getSession();
+        try {
+            sess.refresh(apt);
+            Hibernate.initialize(apt.getBlockList());
+        } finally {
+            closeSession();
+        }
+    }
+
+    @Override
+    public List<Block> fetchBlocks(Long apartmentId) {
+        List<Block> list = null;
+        try {
+            list = getDaoFactory().getBlockDao().searchByApartmentId(apartmentId);
+        } catch (Exception e) {
+            log.error(e, e);
+            throw e;
+        } finally {
+            closeSession();
+        }
+        return list;
+    }
+
+    @Override
+    public void fetchHouseList(Block block) {
+        List<House> houseList = fetchHouseList(block.getId());
+        block.setHouseList(houseList);
+    }
+
+    @Override
+    public List<House> fetchHouseList(Long blockId) {
+        List<House> houseList = null;
+        try {
+            houseList = getDaoFactory().getHouseDao().searchByBlockId(blockId);
+            for (House h : houseList) {
+                Hibernate.initialize(h.getTenant());
+                Hibernate.initialize(h.getLandlord());
+            }
+        } catch (Exception e) {
+            log.error(e, e);
+        } finally {
+            closeSession();
+        }
+        return houseList;
+    }
+
+    @Override
+    public void saveBlock(Block block) {
+        try {
+            beginTransaction();
+            getDaoFactory().getBlockDao().merge(block);
+            commitTransaction();
+
+        } catch (Exception e) {
+            rollback();
+            log.error(e, e);
+            throw e;
+        } finally {
+            closeSession();
+        }
+    }
+
+    @Override
+    public void saveHouse(House house) {
+        try {
+            beginTransaction();
+            getDaoFactory().getHouseDao().merge(house);
+            commitTransaction();
+        } catch (Exception e) {
+            rollback();
+            log.error(e, e);
+            throw e;
+        } finally {
+            closeSession();
+        }
+    }
+
+    @Override
+    public List<Contract> fetchContractsByApartmentId(Long apartmentId) {
+        List<Contract> list = null;
+        try {
+            list = getDaoFactory().getContractDao().searchByApartmentId(apartmentId);
+        } catch (Exception e) {
+            log.error(e, e);
+            throw e;
+        } finally {
+            closeSession();
+        }
+        return list;
+    }
+
+    @Override
+    public void fetchContractsByApartmentId(Apartment apartment) {
+        List<Contract> contracts = fetchContractsByApartmentId(apartment.getId());
+        apartment.setContractList(contracts);
+    }
+
+    @Override
+    public void saveContract(Contract contract) {
+        try {
+
+			// validations
+			// ayni anda 2 aktif kayit olamaz
+			// ayni tarih araliginda 2 kontrat olamaz
+			// eger bir kontrati aktif olarak kaydediyorsak, apartment tablosundaki contract_id degistirilecek
+            if (contract.getBalance() == null) {
+                contract.setBalance(0d);
+            }
+            if (contract.getTotalExpenses() == null) {
+                contract.setTotalExpenses(0d);
+            }
+            if (contract.getTotalIncome() == null) {
+                contract.setTotalIncome(0d);
+            }
+            beginTransaction();
+            getDaoFactory().getContractDao().merge(contract);
+            commitTransaction();
+        } catch (Exception e) {
+            rollback();
+            log.error(e, e);
+            throw e;
+        } finally {
+            closeSession();
+        }
+    }
+
+    @Override
+    public List<House> fetchPersonsHouse(Long personId) {
+        List<House> list = null;
+        try {
+            list = getDaoFactory().getHouseDao().fetchPersonsHouse(personId);
+        } catch (Exception e) {
+            log.error(e, e);
+            e.printStackTrace();
+        } finally {
+            closeSession();
+        }
+        return list;
+    }
+
+    public static void main(String[] args) {
+		List<House> list = new BuildingServiceImpl().fetchPersonsHouse(8L);
+                System.out.println(list);
+    }
+
+}

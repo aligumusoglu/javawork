@@ -1,0 +1,162 @@
+package com.hasanunlukilinc.sms.beans;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
+import org.joda.time.DateTime;
+import org.primefaces.model.DefaultStreamedContent;
+
+import com.hasanunlukilinc.sms.entities.Apartment;
+import com.hasanunlukilinc.sms.entities.MonthBalanceReport;
+import com.hasanunlukilinc.sms.services.ReportService;
+
+@ManagedBean(name = "balanceBean")
+@ViewScoped
+public class BalanceBean extends BaseBean
+{
+
+	private static final long	serialVersionUID	= 1L;
+
+	private Apartment		   	selectedApartment;
+	private MonthBalanceReport	monthBalanceReport;
+	private int					selectedYear;
+	private int					selectedMonth;
+	private List<Integer>		years 		  = new ArrayList<Integer>();
+	ByteArrayOutputStream		byteArrayOutputStream;
+	InputStream					inputStream;
+	private	ReportService 		reportService;
+	
+	public BalanceBean()
+	{
+	}
+	
+
+	@PostConstruct
+	private void initBean()
+	{
+		initYears();
+	}
+
+	public void createDefaultMonthBalanceReport()
+	{
+		createMonthBalanceReport(false);
+	}
+	//Detaylı Raporda Toplanan Ek Aidatlar Satir Satir Listeleniyor
+	public void createDetailedMonthBalanceReport()
+	{
+		createMonthBalanceReport(true);
+	}
+	
+	private void createMonthBalanceReport(boolean detailedReport)
+	{
+		try
+		{
+			DateTime startDate = new DateTime().withDate(selectedYear, selectedMonth, 1);
+			DateTime endDate = startDate.dayOfMonth().withMaximumValue();
+   		 if(checkPermission(startDate.toDate()) && selectedMonth > 0)
+		 {
+			Apartment apartment = getSessionBean().getSelectedHouse().getBlock().getApartment();
+			byteArrayOutputStream = new ByteArrayOutputStream();
+			reportService = getServiceFactory().getReportService();
+			monthBalanceReport = reportService.getBalanceByApartmentId(apartment.getId(), startDate.toDate(), endDate.toDate());
+			reportService.getBalanceByApartmentId(apartment.getId(), apartment.getName(), startDate.toDate(), endDate.toDate(), detailedReport);
+			reportService.createPdf(byteArrayOutputStream);
+			inputStream = new ByteArrayInputStream(byteArrayOutputStream.toByteArray());
+			setStreamedContent(new DefaultStreamedContent(inputStream, "application/pdf", "aylik-bilanco.pdf"));
+		 }
+   		 else
+   		 {
+   			 addWarningMessage("Seçtiğiniz Ayın Raporunu Görüntülemek İçin Gereken Yetkiye Sahip Değilsiniz!");
+   			 updateGrowl();
+   		 }
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+	
+	//HTML sayfasındaki detay alanı için monthBalanceReport nesnesini doldurur
+	public void createMonthBalanceReportForPage()
+	{
+		DateTime startDate = new DateTime().withDate(selectedYear, selectedMonth, 1);
+		DateTime endDate = startDate.dayOfMonth().withMaximumValue();
+		if(checkPermission(startDate.toDate()) && selectedMonth > 0)
+		{
+			Apartment apartment = getSessionBean().getSelectedHouse().getBlock().getApartment();
+			reportService = getServiceFactory().getReportService();
+			monthBalanceReport = reportService.getBalanceByApartmentId(apartment.getId(), startDate.toDate(), endDate.toDate());
+			if(monthBalanceReport == null)
+				monthBalanceReport = new MonthBalanceReport();
+		}
+		else
+   		{
+			addWarningMessage("Seçtiğiniz Ayın Raporunu Görüntülemek İçin Gereken Yetkiye Sahip Değilsiniz!");
+  			updateGrowl();
+   		}
+	}
+	private void initYears()
+	{
+		DateTime datetime = new DateTime();
+		int currentYear = Integer.parseInt(datetime.toString("yyyy"));
+		years.add(currentYear);
+		while(years.size() < 6)
+		{
+			currentYear -= 1;
+			years.add(currentYear);
+		}
+		selectedYear = years.get(0);
+	}
+
+
+
+	public Apartment getSelectedApartment()
+	{
+		return selectedApartment;
+	}
+
+	public void setSelectedApartment(Apartment selectedApartment)
+	{
+		this.selectedApartment = selectedApartment;
+	}
+
+	public int getSelectedYear() {
+		return selectedYear;
+	}
+	
+	public void setSelectedYear(int selectedYear) {
+		this.selectedYear = selectedYear;
+	}
+	
+	public int getSelectedMonth() {
+		return selectedMonth;
+	}
+	public void setSelectedMonth(int selectedMonth) {
+		this.selectedMonth = selectedMonth;
+	}
+	
+	public List<Integer> getYears() {
+		return years;
+	}
+	
+	public void setYears(List<Integer> years) {
+		this.years = years;
+	}
+	
+	public MonthBalanceReport getMonthBalanceReport() {
+		return monthBalanceReport;
+	}
+	
+	public void setMonthBalanceReport(MonthBalanceReport monthBalanceReport) {
+		this.monthBalanceReport = monthBalanceReport;
+	}
+	
+}

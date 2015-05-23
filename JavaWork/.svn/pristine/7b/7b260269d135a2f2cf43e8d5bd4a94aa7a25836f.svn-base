@@ -1,0 +1,20 @@
+package com.hasanunlukilinc.sms.services;
+
+import java.util.List;
+
+import com.hasanunlukilinc.sms.application.PublicResult;
+import com.hasanunlukilinc.sms.entities.ServiceType;
+
+/**
+ * 
+ * @author hasan
+ *
+ */
+public interface ServiceTypeService
+{
+	public List<ServiceType> getServiceTypeList();
+
+	public PublicResult saveServiceType(Long userId, String ip, ServiceType serviceType);
+
+	public PublicResult deleteServiceType(Long userId, String ip, Long serviceTypeID);
+}

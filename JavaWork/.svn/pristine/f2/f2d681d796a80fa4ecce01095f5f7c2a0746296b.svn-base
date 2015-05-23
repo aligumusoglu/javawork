@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN" "http://hibernate.sourceforge.net/hibernate-configuration-3.0.dtd">
+<hibernate-configuration>
+
+	<session-factory>
+		<property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
+		<property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
+		<property name="hibernate.connection.url">jdbc:postgresql://5.196.225.38:5432/SiteManagement</property>
+		<property name="hibernate.connection.username">postgres</property>
+		<property name="hibernate.connection.password">postgres</property>
+		<property name="show_sql">true</property>
+		<!--<property name="connection.provider_class">org.hibernate.connection.C3P0ConnectionProvider</property> -->
+
+
+		<property name="hibernate.c3p0.min_size">1</property>
+		<property name="hibernate.c3p0.max_size">20</property>
+		<property name="hibernate.c3p0.timeout">300</property>
+		<property name="hibernate.c3p0.max_statements">50</property>
+		<property name="hibernate.c3p0.idle_test_period">3000</property>
+		<!-- <property name="hibernate.c3p0.testConnectionOnCheckout" value="true" 
+			/> -->
+
+		<mapping class="com.hasanunlukilinc.sms.entities.Apartment" />
+		<mapping class="com.hasanunlukilinc.sms.entities.AppLog" />
+		<mapping class="com.hasanunlukilinc.sms.entities.Block" />
+		<mapping class="com.hasanunlukilinc.sms.entities.Company" />
+		<mapping class="com.hasanunlukilinc.sms.entities.Contract" />
+		<mapping class="com.hasanunlukilinc.sms.entities.Dues" />
+		<mapping class="com.hasanunlukilinc.sms.entities.ExtraDues" />
+		<mapping class="com.hasanunlukilinc.sms.entities.Expense" />
+		<mapping class="com.hasanunlukilinc.sms.entities.House" />
+		<mapping class="com.hasanunlukilinc.sms.entities.Income" />
+		<mapping class="com.hasanunlukilinc.sms.entities.IncomeReceivable" />
+		<mapping class="com.hasanunlukilinc.sms.entities.Info" />
+		<mapping class="com.hasanunlukilinc.sms.entities.Janitor" />
+		<mapping class="com.hasanunlukilinc.sms.entities.MonthBalance" />
+		<mapping class="com.hasanunlukilinc.sms.entities.OverdueInterest" />
+		<mapping class="com.hasanunlukilinc.sms.entities.Person" />
+		<mapping class="com.hasanunlukilinc.sms.entities.Receivable" />
+		<mapping class="com.hasanunlukilinc.sms.entities.ReportPermission" />
+		<mapping class="com.hasanunlukilinc.sms.entities.ServiceType" />
+		<mapping class="com.hasanunlukilinc.sms.entities.User" />
+	</session-factory>
+</hibernate-configuration>

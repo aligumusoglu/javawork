@@ -1,0 +1,41 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.hasanunlukilinc.sms.dao;
+
+import java.util.Date;
+
+import org.hibernate.Query;
+
+import com.hasanunlukilinc.sms.entities.IncomeReceivable;
+import com.hasanunlukilinc.sms.services.SessionProvider;
+
+/**
+ *
+ * @author gngnew
+ */
+public class IncomeReceivableDao extends BaseDao<IncomeReceivable> {
+
+    public IncomeReceivableDao(SessionProvider sp) {
+        super(sp);
+    }
+    
+    public Double getTotalReceivableByApartmentIdByDateByServiceTypeId(Long apartmenId, Date firstDate,
+			Date secondDate, Long serviceTypeId)
+	{
+		Double result = 0.0;
+		Query q = getSession()
+				.createQuery(
+						"SELECT SUM(IR.price) FROM IncomeReceivable IR INNER JOIN IR.receivable R  WHERE IR.payDate >= :start and IR.payDate <= :end AND R.serviceTypeId = :serviceTypeId AND R.apartmentId = :apartmentId GROUP BY R.apartmentId");
+		q.setLong("apartmentId", apartmenId);
+		q.setDate("start", firstDate);
+		q.setDate("end", secondDate);
+		q.setLong("serviceTypeId", serviceTypeId);
+		result = (Double)q.uniqueResult();
+
+		return result;
+	}
+    
+}

@@ -1,0 +1,142 @@
+package com.hasanunlukilinc.sms.services;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+
+import com.hasanunlukilinc.sms.application.PublicResult;
+import com.hasanunlukilinc.sms.entities.Apartment;
+import com.hasanunlukilinc.sms.entities.Block;
+import com.hasanunlukilinc.sms.entities.House;
+import com.hasanunlukilinc.sms.entities.Person;
+import com.hasanunlukilinc.sms.util.Encryption;
+import com.hasanunlukilinc.sms.util.HibernateUtil;
+import org.hibernate.Criteria;
+import org.hibernate.FetchMode;
+import org.hibernate.Query;
+import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
+
+/**
+ *
+ * @author hasan
+ *
+ */
+class PersonServiceImpl extends BaseService implements PersonService {
+
+    private Logger log = Logger.getLogger(PersonServiceImpl.class);
+
+    public PersonServiceImpl() {
+    }
+
+    @Override
+    public List<Person> getPersonList(Long userId, String ip) {
+        List<Person> personList = new ArrayList<Person>();
+
+        try {
+            personList = getDaoFactory().getPersonDao().findAll();
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error("failed!", e);
+        }
+
+        return personList;
+    }
+
+    @Override
+    public void savePerson(Long userId, String ip, Person person) {
+        try {
+            beginTransaction();
+            getDaoFactory().getPersonDao().merge(person);
+            commitTransaction();
+        } catch (Exception e) {
+            rollback();
+            log.error("failed!", e);
+            throw e;
+        } finally {
+            closeSession();
+        }
+    }
+
+    @Override
+    public PublicResult deletePerson(Long userId, String ip, Long personId) {
+        PublicResult result = PublicResult.FAIL;
+        try {
+            beginTransaction();
+            getDaoFactory().getPersonDao().deletePerson(personId);
+            commitTransaction();
+            result = PublicResult.SUCCESS;
+        } catch (Exception e) {
+            rollback();
+            e.printStackTrace();
+            log.error("failed!", e);
+        } finally {
+            closeSession();
+        }
+        return result;
+    }
+
+    @Override
+    public Person loginPerson(String email, String password) {
+        Person person = null;
+        password = Encryption.encrypt(password);
+        try {
+            person = getDaoFactory().getPersonDao().loginPerson(email, password);
+        } catch (Exception e) {
+            e.printStackTrace();
+            log.error(e, e);
+            throw e;
+        } finally {
+            closeSession();
+        }
+        return person;
+    }
+    
+    public List<House> fetchPersonsHouse(Long personId) {
+        List<House> list = null;
+        
+        try {
+            Query q = getSession().createQuery("select h, b, a from House h " 
+                    + "JOIN FETCH h.block b " 
+                    + "JOIN FETCH b.apartment a " 
+                    + "where h.tenantId = :personId or h.landlordId = :personId "
+                    + "order by a.name, b.blockName, h.houseNumber");
+            // or h.landlordId = :personId
+            q.setLong("personId", personId);
+            list = q.list();
+            
+            
+        } catch (Exception e) {
+            log.error(e, e);
+            e.printStackTrace();
+        } finally {
+            closeSession();
+        }
+        
+        return list;
+    }
+    
+    public static void main(String[] args) {
+        PersonServiceImpl psi = new PersonServiceImpl();
+        List<House> list = psi.fetchPersonsHouse(8L);
+        for (House h : list) {
+            System.out.println(h.getBlock().getApartment() + " - " + h.getBlock().getBlockName() + " - " + h.getHouseNumber());
+        }
+        
+//        Person p = psi.loginPerson("gungor@gungor.com", "gungor");
+//        System.out.println(p);
+        
+        
+//        String pass = Encryption.encrypt("gungor");
+//        Session sess = HibernateUtil.openSession();
+//        Criteria cr = sess.createCriteria(Person.class);
+//        cr.add(Restrictions.eq("mail", "gungor@gungor.com"));
+//        cr.add(Restrictions.eq("password", pass));
+//        Person p = (Person) cr.uniqueResult();
+//        System.out.println(pass.equals(p));
+//        System.out.println(p.getPassword());
+//        sess.close();
+        
+    }
+}

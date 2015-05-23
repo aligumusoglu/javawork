@@ -1,0 +1,6 @@
+package com.aligumusoglu.javawork.enums;
+
+//Results list.
+public enum PublicResult {
+	SUCCESS,FAIL,DUMPLICATE
+}

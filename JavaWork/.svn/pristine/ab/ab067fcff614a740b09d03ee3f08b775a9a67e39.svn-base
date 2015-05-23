@@ -1,0 +1,24 @@
+package com.hasanunlukilinc.sms.beans;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+
+/**
+ *
+ * @author Gungor Akbiyik <gungor.akbiyik at gmail.com>
+ */
+@ManagedBean
+@SessionScoped
+public class CheckPermissionBean extends BaseBean
+{
+
+	public CheckPermissionBean()
+	{
+	}
+
+	@PostConstruct
+	private void postConstruct()
+	{
+	}
+}

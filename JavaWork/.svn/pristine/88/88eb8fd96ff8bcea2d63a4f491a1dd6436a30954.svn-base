@@ -1,0 +1,105 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      lang="tr">
+    
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{sessionBean.setCurrentPage(2)}" />
+    </f:metadata>
+    <h:body>
+       <ui:composition template="./template.xhtml">
+		<ui:define name="title">Site Yönetici</ui:define>
+		<ui:define name="head"></ui:define>
+		<ui:define name="content">
+                <div class="page-header">
+                    <form method="get" class="form pull-right">
+                        <select class="form-control">
+                            <option value="">Site Seç</option>
+                            <option>Site 1</option>
+                            <option>Site 2</option>
+                            <option>Site 3</option>
+                        </select>
+                    </form>
+                    <h3>#{sessionBean.selectedHouse.block.apartment.name},
+	                    #{sessionBean.selectedHouse.block.blockName},
+	                    #{sessionBean.selectedHouse.houseNumber}
+	                </h3>
+                </div>
+                <h:form class="form pull-right">
+                      <h:selectOneMenu styleClass="form-control" value="#{debtBean.selectedYear}" required="true">
+                      	<p:ajax listener="#{debtBean.onYearChoosen()}" update=":formDebtTable" />
+		                <f:selectItem itemLabel="Yıl Seçiniz" itemValue="" noSelectionOption="true" />
+		                <f:selectItems value="#{debtBean.years}"/>
+           		 </h:selectOneMenu>
+                </h:form>
+                <h:form id ="formDebtTable">
+                <h2>#{debtBean.selectedYear}</h2>
+                <table id="debtTable" class="table">
+                    <thead>
+                        <th >Ay</th>
+                        <th >Borç Kalemi</th>
+                        <th >Borç Tutarı</th>
+                        <th >Ödenen Tutar</th>
+                        <th >Kalan Borç</th>
+                        <th >Faiz Oranı</th>
+                        <th >Ödenecek Tutar</th>
+                    </thead>
+                     <ui:repeat var="debt" value="#{debtBean.debtList}">
+                   	  <tr>
+	                        <td><b>#{debt.month}</b></td>
+	                        <td><b>#{debt.monthName}</b></td>
+	                        <td>
+	                        	<b>
+			                        <h:outputText value="#{debt.totalDebt}">
+										<f:convertNumber type="currency" locale="TR_tr" />
+									</h:outputText>
+								</b>
+							</td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+                    </tr>
+	                    <ui:repeat var="receivable" value="#{debt.receivables}">
+	                    	 <tr class="child">
+			                        <td></td>
+			                        <td><small><h:outputText value="#{receivable.serviceType.serviceName}" /></small></td>
+			                        <td><small>
+					                        <h:outputText value="#{receivable.price}">
+												<f:convertNumber type="currency" locale="TR_tr" />
+											</h:outputText>
+									</small></td>
+									<td><small>
+					                        <h:outputText value="#{receivable.paidPrice}">
+												<f:convertNumber type="currency" locale="TR_tr" />
+											</h:outputText>
+									</small></td>
+									<td><small>
+					                        <h:outputText value="#{receivable.remainingDebt}">
+												<f:convertNumber type="currency" locale="TR_tr" />
+											</h:outputText>
+									</small></td>
+									<td><small>
+					                        <h:outputText value="#{receivable.interestRate}">
+												<f:convertNumber type="currency" locale="TR_tr" />
+											</h:outputText>
+									</small></td>
+									<td><small>
+					                        <h:outputText value="#{receivable.interestPrice}">
+												<f:convertNumber type="currency" locale="TR_tr" />
+											</h:outputText>
+									</small></td>
+				             </tr>
+	                    </ui:repeat>
+                    </ui:repeat>
+                   
+                </table>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

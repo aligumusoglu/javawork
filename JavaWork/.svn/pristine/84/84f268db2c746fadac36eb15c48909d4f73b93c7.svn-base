@@ -1,0 +1,396 @@
+package com.hasanunlukilinc.sms.beans;
+
+import com.hasanunlukilinc.sms.entities.Apartment;
+import com.hasanunlukilinc.sms.entities.Block;
+import com.hasanunlukilinc.sms.entities.Contract;
+import com.hasanunlukilinc.sms.entities.House;
+import com.hasanunlukilinc.sms.entities.Person;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import org.hibernate.exception.ConstraintViolationException;
+import org.primefaces.context.RequestContext;
+import org.primefaces.event.SelectEvent;
+
+/**
+ *
+ * @author gngnew
+ */
+@ManagedBean
+@ViewScoped
+public class ApartmentsBean extends BaseBean
+{
+
+	private List<Apartment>	apartments;
+	private List<Person>	personList;
+	private Apartment		selectedApartment;
+	private Block			selectedBlock;
+	private House			selectedHouse;
+	private Contract		selectedContract;
+
+	public ApartmentsBean()
+	{
+	}
+
+	@PostConstruct
+	public void initBean()
+	{
+		fetchApartments();
+		fetchPersonList();
+	}
+
+	private void fetchApartments()
+	{
+		apartments = getServiceFactory().getBuildingsService().fetchApartments();
+	}
+
+	private void fetchBlocks()
+	{
+		if (selectedApartment != null)
+		{
+			//            getServiceFactory().getBuildingsService().fetchBlocks(selectedApartment);
+			selectedApartment.setBlockList(getServiceFactory().getBuildingsService().fetchBlocks(
+					selectedApartment.getId()));
+		}
+	}
+
+	private void fetchHouses()
+	{
+		if (selectedBlock != null)
+		{
+			getServiceFactory().getBuildingsService().fetchHouseList(selectedBlock);
+		}
+	}
+
+	private void fetchPersonList()
+	{
+		personList = getServiceFactory().getPersonService().getPersonList(getUserId(), getIp());
+	}
+
+	private void fetchContracts()
+	{
+		getServiceFactory().getBuildingsService().fetchContractsByApartmentId(selectedApartment);
+	}
+
+	public List<Person> getPersonList()
+	{
+		return personList;
+	}
+
+	public void setPersonList(List<Person> personList)
+	{
+		this.personList = personList;
+	}
+
+	public List<Apartment> getApartments()
+	{
+		return apartments;
+	}
+
+	public void setApartments(List<Apartment> apartments)
+	{
+		this.apartments = apartments;
+	}
+
+	public Apartment getSelectedApartment()
+	{
+		return selectedApartment;
+	}
+
+	public void setSelectedApartment(Apartment selectedApartment)
+	{
+		this.selectedApartment = selectedApartment;
+	}
+
+	public Block getSelectedBlock()
+	{
+		return selectedBlock;
+	}
+
+	public void setSelectedBlock(Block selectedBlock)
+	{
+		this.selectedBlock = selectedBlock;
+	}
+
+	public void newApartment()
+	{
+		selectedApartment = new Apartment();
+	}
+
+	public void newBlock()
+	{
+		selectedBlock = new Block();
+	}
+
+	public House getSelectedHouse()
+	{
+		return selectedHouse;
+	}
+
+	public void setSelectedHouse(House selectedHouse)
+	{
+		this.selectedHouse = selectedHouse;
+	}
+
+	public Contract getSelectedContract()
+	{
+		return selectedContract;
+	}
+
+	public void setSelectedContract(Contract selectedContract)
+	{
+		this.selectedContract = selectedContract;
+	}
+
+	public void onApartmentSelect()
+	{
+		fetchBlocks();
+	}
+
+	public void onBlockSelect()
+	{
+		fetchHouses();
+	}
+
+	public void onHouseSelect()
+	{
+
+	}
+
+	public void newHouse()
+	{
+		selectedHouse = new House();
+	}
+
+	public void saveApartment()
+	{
+		if (selectedApartment == null)
+		{
+			addErrorMessage("Site seçimi yapılmadı");
+			updateGrowl();
+			return;
+		}
+
+		try
+		{
+
+			selectedApartment.setName(toLocaleUpperCase(selectedApartment.getName()));
+			selectedApartment.setTaxOffice(toLocaleUpperCase(selectedApartment.getTaxOffice()));
+
+			getServiceFactory().getBuildingsService().saveApartment(selectedApartment);
+			addSavedMessage();
+			hideDialog("editDlg");
+			fetchApartments();
+			update("frm");
+		}
+		catch (ConstraintViolationException e)
+		{
+			addNotSaveMessage();
+			if (e.getConstraintName().equals("unique_apartmant_businesregnumber"))
+			{
+				addErrorMessage("İşyeri No : " + selectedApartment.getBusinessRegistrationNumber()
+						+ " daha önce başka bir site için kullanılmış");
+			}
+			else if (e.getConstraintName().equals("unique_apartmant_taxnumber"))
+			{
+				addErrorMessage("Vergi No : " + selectedApartment.getTaxNumber()
+						+ " daha önce başka bir site için kullanılmış");
+			}
+			else
+			{
+				addErrorMessage(e.getConstraintName() + " ");
+			}
+
+		}
+		catch (Exception e)
+		{
+			addNotSaveMessage();
+			addErrorMessage(e.getMessage());
+		}
+		finally
+		{
+			updateGrowl();
+		}
+	}
+
+	public void saveBlock()
+	{
+		if (selectedApartment == null)
+		{
+			addErrorMessage("Blok eklemek için site seçimi yapılmadı!");
+			updateGrowl();
+			return;
+		}
+
+		if (selectedBlock == null)
+		{
+			addErrorMessage("Blok seçilmedi!");
+			updateGrowl();
+			return;
+		}
+
+		try
+		{
+			selectedBlock.setApartmentId(selectedApartment.getId());
+			selectedBlock.setBlockName(toLocaleUpperCase(selectedBlock.getBlockName()));
+			getServiceFactory().getBuildingsService().saveBlock(selectedBlock);
+			addSavedMessage();
+			hideDialog("editBlockDlg");
+			fetchBlocks();
+			update("dtBlocks");
+		}
+		catch (Exception e)
+		{
+			addNotSaveMessage();
+			addErrorMessage(e.getMessage());
+		}
+		finally
+		{
+			updateGrowl();
+		}
+	}
+
+	public void saveHouse()
+	{
+		if (selectedApartment == null)
+		{
+			addErrorMessage("Mesken Eklemek İçin bir site seçmediniz!");
+			updateGrowl();
+			return;
+		}
+
+		if (selectedBlock == null)
+		{
+			addErrorMessage("Mesken Eklemek İçin bir blok seçmediniz");
+			updateGrowl();
+			return;
+		}
+
+		if (selectedHouse == null)
+		{
+			addErrorMessage("Mesken seçilmi yapılmadı!");
+			updateGrowl();
+			return;
+		}
+
+		try
+		{
+
+			if (selectedHouse.getLandlordId() == null)
+			{
+				addErrorMessage("Lütfen ev sahibini seçiniz");
+				return;
+			}
+
+			//Eğer kiracı seçilmemişse evin kiracısı ev sahibi
+			if (selectedHouse.getTenantId() == null)
+			{
+				selectedHouse.setTenantId(selectedHouse.getLandlordId());
+			}
+
+			if (selectedHouse.getBlockId() == null)
+			{
+				selectedHouse.setBlockId(selectedBlock.getId());
+			}
+
+			getServiceFactory().getBuildingsService().saveHouse(selectedHouse);
+			addSavedMessage();
+			hideDialog("editHouseDlg");
+			fetchHouses();
+			update("dtHouses");
+
+		}
+		catch (Exception e)
+		{
+			addNotSaveMessage();
+			addErrorMessage(e.getMessage());
+		}
+		finally
+		{
+			updateGrowl();
+		}
+	}
+
+	public void choosePerson()
+	{
+		Map<String, Object> options = new HashMap<String, Object>();
+		options.put("modal", true);
+		options.put("draggable", false);
+		options.put("resizable", false);
+		options.put("contentHeight", 500);
+		options.put("contentWidth", 600);
+		RequestContext.getCurrentInstance().openDialog("/dialog/person-list-dialog", options, null);
+	}
+
+	public void onChoosenLandlord(SelectEvent event)
+	{
+		Person person = (Person)event.getObject();
+		selectedHouse.setLandlord(person);
+		selectedHouse.setLandlordId(person.getId());
+	}
+
+	public void onChoosenTenant(SelectEvent event)
+	{
+		Person person = (Person)event.getObject();
+		selectedHouse.setTenant(person);
+		selectedHouse.setTenantId(person.getId());
+	}
+
+	public void openContracts()
+	{
+		fetchContracts();
+	}
+
+	public void newContract()
+	{
+		selectedContract = new Contract();
+	}
+
+	public void saveContract()
+	{
+		if (selectedApartment == null)
+		{
+			addErrorMessage("selected apartment is null");
+			updateGrowl();
+			return;
+		}
+
+		if (selectedContract == null)
+		{
+			addErrorMessage("selected contract is null");
+			updateGrowl();
+			return;
+		}
+
+		try
+		{
+
+			if (selectedContract.getApartmentId() == null)
+			{
+				selectedContract.setApartmentId(selectedApartment.getId());
+			}
+
+			getServiceFactory().getBuildingsService().saveContract(selectedContract);
+			addSavedMessage();
+			hideDialog("contractEditDlg");
+			fetchContracts();
+			selectedContract = null;
+			update("contractsDt", "contractsToolbar");
+
+		}
+		catch (Exception e)
+		{
+			addNotSaveMessage();
+			addErrorMessage(e.getMessage());
+		}
+		finally
+		{
+			updateGrowl();
+		}
+	}
+
+        
+}

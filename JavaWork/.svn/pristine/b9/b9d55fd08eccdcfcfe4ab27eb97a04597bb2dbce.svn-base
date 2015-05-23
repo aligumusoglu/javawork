@@ -1,0 +1,83 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:h="http://xmlns.jcp.org/jsf/html" 
+      xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+      xmlns:p="http://primefaces.org/ui"
+      lang="tr">
+	<h:head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		 <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    	<meta name="viewport" content="width=device-width, initial-scale=1"/>
+    	<title>Site Yönetici</title>
+		<h:outputStylesheet name="./assets/bs/css/bootstrap.min.css" />
+		<h:outputStylesheet name="./assets/bs/css/bootstrap-theme.min.css" />
+		<h:outputStylesheet name="./assets/style.css" />
+		
+		 <!--[if lt IE 9]>
+	      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+	      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    	<![endif]-->
+	</h:head>
+    <h:body class="background">
+        <div class="container">
+            <div class="row">
+                <!--// LOGIN FORM -->
+                <div class="col-md-6 col-md-offset-3">
+                    <div class="panel panel-default login">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Üye Girişi</h3>
+                        </div>
+                        <div class="panel-body">
+                            <h:form class="form-horizontal" role="form">
+                                <p:messages showSummary="false" showDetail="true" showIcon="false"/>
+                                <div class="form-group">
+                                    <label for="inputUsername" class="col-sm-3 control-label">Kullanıcı Adı</label>
+                                    <div class="col-sm-9">
+                                        <p:inputText id="inputUsername" value="#{loginBean.username}" pt:type="email" styleClass="form-control" pt:placeholder="Kullanıcı Adı"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="inputPassword" class="col-sm-3 control-label">Parola</label>
+                                    <div class="col-sm-9">
+                                        <p:inputText id="inputPassword" value="#{loginBean.password}" pt:type="password" styleClass="form-control" pt:placeholder="Parola"/>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-3 col-sm-9">
+                                        <div class="checkbox">
+                                            <label>
+                                                <input type="checkbox"/> Beni hatırla
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-sm-offset-3 col-sm-9">
+                                        <p:commandButton value="Giriş" styleClass="btn btn-default" ajax="false" action="#{loginBean.login()}"/>
+                                        <a href="reset_form.html">Parolayı unuttum</a>
+                                    </div>
+                                </div>
+                            </h:form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <script src="assets/bs/js/bootstrap.min.js"></script>
+
+
+        <script type="text/javascript">
+            var images = ['01.jpg', '02.jpg', '03.jpg', '04.jpg', '05.jpg'];
+            $('body').css({
+                'background': 'url(resources/assets/img/' + images[Math.floor(Math.random() * images.length)] + ') no-repeat center center fixed',
+                '-webkit-background-size': 'cover',
+                '-moz-background-size': 'cover',
+                'o-background-size': 'cover',
+                'background-size': 'cover'
+            });
+        </script>
+    </h:body>
+</html>

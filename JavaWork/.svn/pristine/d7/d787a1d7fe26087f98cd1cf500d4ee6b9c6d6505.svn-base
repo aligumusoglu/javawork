@@ -1,0 +1,29 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.hasanunlukilinc.sms.dao;
+
+import com.hasanunlukilinc.sms.entities.Block;
+import com.hasanunlukilinc.sms.services.SessionProvider;
+import java.util.List;
+import org.hibernate.criterion.Restrictions;
+
+/**
+ *
+ * @author gngnew
+ */
+public class BlockDao extends BaseDao<Block> {
+
+    public BlockDao(SessionProvider sp) {
+        super(sp);
+    }
+
+    public List<Block> searchByApartmentId(Long apartmentId) {
+        return getSession().createCriteria(Block.class).add(Restrictions.eq("apartmentId", apartmentId)).list();
+    }
+    
+    
+    
+}

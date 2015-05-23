@@ -1,0 +1,25 @@
+package com.aligumusoglu.javawork.dao;
+
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.MongoClient;
+
+public class BaseDao {
+
+	static MongoClient mongoClient = null;
+	static DB database = null;
+	static DBCollection dbCollection = null;
+
+	//Creating a database connection.
+	public DB getConnection() throws Exception {
+		if (mongoClient == null)
+			mongoClient = new MongoClient("localhost", 27017);
+		return database = mongoClient.getDB("JavaWork");
+	}
+
+	//This method using for connect a collection.
+	public DBCollection getDbCollection(String tableName) throws Exception {
+		return getConnection().getCollection(tableName);
+	}
+
+}

@@ -1,0 +1,241 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="month-balance" language="groovy" pageWidth="595" pageHeight="842" columnWidth="535" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a7c69825-2dbf-4b10-bb45-2f0dfa122b31">
+	<property name="ireport.zoom" value="1.100000000000003"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="79"/>
+	<parameter name="dues" class="java.lang.Double"/>
+	<parameter name="extra_dues" class="java.lang.Double"/>
+	<parameter name="apartment_name" class="java.lang.String"/>
+	<parameter name="sub_title" class="java.lang.String"/>
+	<parameter name="author_name" class="java.lang.String"/>
+	<parameter name="month_name" class="java.lang.String"/>
+	<parameter name="old_month_name" class="java.lang.String"/>
+	<parameter name="old_balance" class="java.lang.Double"/>
+	<parameter name="apartment_id" class="java.lang.Long"/>
+	<parameter name="first_date" class="java.util.Date"/>
+	<parameter name="second_date" class="java.util.Date"/>
+	<queryString>
+		<![CDATA[SELECT E.description,E.price FROM expenses E WHERE E.apartment_id = $P{apartment_id} AND E.document_date >= $P{first_date} AND E.document_date <= $P{second_date}]]>
+	</queryString>
+	<field name="description" class="java.lang.String"/>
+	<field name="price" class="java.lang.Double"/>
+	<variable name="total_expenses" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$F{price}]]></variableExpression>
+	</variable>
+	<background>
+		<band/>
+	</background>
+	<title>
+		<band height="72">
+			<frame>
+				<reportElement mode="Opaque" x="-21" y="-20" width="597" height="70" backcolor="#006699" uuid="19ba8d42-d8ee-4953-894c-3a902a758cb3"/>
+				<textField>
+					<reportElement x="20" y="0" width="556" height="39" forecolor="#FFFFFF" uuid="734b9fc6-0a09-4bd4-93e0-5ea027b2c41d"/>
+					<textElement textAlignment="Center" verticalAlignment="Bottom">
+						<font size="20" isBold="true" pdfEncoding="Cp1254"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{apartment_name}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="20" y="39" width="556" height="25" forecolor="#FFFFFF" uuid="15fcdc12-52e0-4f1c-b3e0-d4b9ac82052e"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font isBold="true" pdfEncoding="Cp1254"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{sub_title}]]></textFieldExpression>
+				</textField>
+			</frame>
+		</band>
+	</title>
+	<pageHeader>
+		<band height="120">
+			<staticText>
+				<reportElement x="1" y="84" width="421" height="20" uuid="b8f2ca14-53c9-4e8e-a66a-c6f4fd34f2d8"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true" pdfEncoding="Cp1254"/>
+				</textElement>
+				<text><![CDATA[TOPLAM KASA]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="1" y="60" width="421" height="20" uuid="d1de3364-4672-49d1-abe2-508b564280f1"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true" pdfEncoding="Cp1254"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{month_name} +" AYI TOPLANAN EK AİDAT"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="40" width="421" height="20" uuid="d3c14fcc-35d9-4514-87ec-6d7161b55059"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true" pdfEncoding="Cp1254"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{month_name} +" AYI TOPLANAN AİDAT"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="1" y="20" width="421" height="20" uuid="fb4b02e8-1ccd-4b07-b592-8a072c523b63"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true" pdfEncoding="Cp1254"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{old_month_name}+" AYI DEVİR KASA"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="156" height="20" forecolor="#FF0000" backcolor="#FFFFFF" uuid="da88a5b5-0117-414d-bdb3-f63c840d3404"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="14" isBold="true" pdfEncoding="Cp1254"/>
+				</textElement>
+				<text><![CDATA[GELİRLER]]></text>
+			</staticText>
+			<textField pattern="#,##0.00 TL">
+				<reportElement x="422" y="20" width="133" height="20" uuid="57d4c451-6837-4d21-8948-fa441f94ea06"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{old_balance}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 TL">
+				<reportElement x="422" y="40" width="133" height="20" uuid="9176e9c9-c468-49b6-a595-1e61541a22fb"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{dues}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 TL">
+				<reportElement x="422" y="84" width="133" height="20" uuid="41644fbd-85a0-4d0e-9a53-fe71f9115ed6"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{dues}+$P{extra_dues}+$P{old_balance}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 TL">
+				<reportElement x="422" y="60" width="133" height="20" uuid="95108c4e-a205-493f-b511-484974de9584"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{extra_dues}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="1" y="81" width="554" height="1" uuid="ea00bb16-7369-49df-bd90-45fa1fe1bbe7"/>
+			</line>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band height="21">
+			<staticText>
+				<reportElement mode="Opaque" x="0" y="0" width="156" height="20" forecolor="#FF0000" backcolor="#FFFFFF" uuid="9892fb4a-1e90-40b1-9b35-72f494ca1227"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="14" isBold="true" pdfEncoding="Cp1254"/>
+				</textElement>
+				<text><![CDATA[GİDERLER]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="0" width="421" height="20" uuid="7c95196e-084f-4f05-b7d6-b20e78a56e79"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="10" isBold="true" pdfEncoding="Cp1254"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="#,##0.00 TL">
+				<reportElement x="421" y="0" width="133" height="20" uuid="32ab44dc-bfd5-4b35-b2ee-6eaabba41f7c"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{price}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band/>
+	</columnFooter>
+	<pageFooter>
+		<band height="25">
+			<rectangle>
+				<reportElement x="-21" y="0" width="595" height="25" forecolor="#FFFFFF" backcolor="#C0C0C0" uuid="c706435a-247c-4951-9cb3-5b994f9dcd77"/>
+			</rectangle>
+			<textField>
+				<reportElement mode="Opaque" x="0" y="0" width="538" height="25" backcolor="#C0C0C0" uuid="b4aa5738-5858-42dc-b748-9d13d2c4ff2b"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA["Sayfa "+$V{PAGE_NUMBER}+" / "]]></textFieldExpression>
+			</textField>
+			<textField evaluationTime="Report">
+				<reportElement mode="Opaque" x="538" y="0" width="17" height="25" backcolor="#C0C0C0" uuid="af134176-1cbc-4c42-8c5a-0c0cf4436a4d"/>
+				<textElement verticalAlignment="Middle"/>
+				<textFieldExpression><![CDATA[" " + $V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="0" width="292" height="25" uuid="154b2c6e-3c6d-426a-ac3c-ad6cb629a1a1"/>
+				<textElement verticalAlignment="Middle">
+					<font size="16" pdfEncoding="Cp1254"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{author_name}]]></textFieldExpression>
+			</textField>
+		</band>
+	</pageFooter>
+	<summary>
+		<band height="110">
+			<rectangle>
+				<reportElement x="-21" y="50" width="595" height="60" forecolor="#FFFFFF" backcolor="#006699" uuid="3241164f-d871-4ba4-a641-297481eee4d5"/>
+			</rectangle>
+			<line>
+				<reportElement x="0" y="5" width="554" height="1" uuid="24f98253-e1a6-41e9-a496-f19444847df3"/>
+			</line>
+			<staticText>
+				<reportElement x="0" y="10" width="421" height="20" uuid="429ec7fd-30e0-4a53-8a07-6d6ef9ffe9b2"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true" pdfEncoding="Cp1254"/>
+				</textElement>
+				<text><![CDATA[GİDERLER TOPLAMI]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="49" width="421" height="20" forecolor="#FFFFFF" uuid="809c0a6e-ead8-4873-bea7-730452dbc05f"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true" pdfEncoding="Cp1254"/>
+				</textElement>
+				<text><![CDATA[TOPLAM GELİR]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="69" width="421" height="20" forecolor="#FFFFFF" uuid="0d70e2c1-bb46-407b-b9ee-2dfddf366eb4"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true" pdfEncoding="Cp1254"/>
+				</textElement>
+				<text><![CDATA[TOPLAM GİDER]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="90" width="421" height="20" forecolor="#FFFFFF" uuid="a9a05d85-8698-49bc-ab3f-6fe9dfcdcb2b"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true" pdfEncoding="Cp1254"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{month_name} +" AYI DEVİR KASA"]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 TL">
+				<reportElement x="421" y="89" width="133" height="20" forecolor="#FFFFFF" uuid="9c126f5a-f0c7-4993-a7dd-da95bf0be4b6"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true" pdfEncoding="Cp1254"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{dues}+$P{extra_dues}+$P{old_balance})-($V{total_expenses})]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 TL">
+				<reportElement x="421" y="70" width="133" height="20" forecolor="#FFFFFF" uuid="81c813b0-3d02-4f4e-ad72-6b3ce55677ef"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true" pdfEncoding="Cp1254"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{total_expenses}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 TL">
+				<reportElement x="422" y="49" width="133" height="20" forecolor="#FFFFFF" uuid="a8c58756-9fe0-4f04-8f3f-0403e1f52484"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true" pdfEncoding="Cp1254"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{dues}+$P{extra_dues}+$P{old_balance}]]></textFieldExpression>
+			</textField>
+			<textField pattern="#,##0.00 TL">
+				<reportElement x="421" y="10" width="133" height="20" uuid="6efc2fee-c2a7-4f74-b523-bf87f0e988fb"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true" pdfEncoding="Cp1254"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{total_expenses}]]></textFieldExpression>
+			</textField>
+		</band>
+	</summary>
+</jasperReport>

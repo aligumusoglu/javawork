@@ -1,0 +1,249 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.hasanunlukilinc.sms.entities;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+/**
+ * @author hasan
+ * @author gngnew
+ */
+@Entity
+@Table(name = "expenses")
+@NamedQueries({@NamedQuery(name = "Expense.findAll", query = "SELECT e FROM Expense e")})
+@SequenceGenerator(name = "seq_expenses_id", sequenceName = "seq_expenses_id", allocationSize = 1)
+public class Expense extends BaseEntity implements Serializable
+{
+	private static final long	serialVersionUID	= 1L;
+	@Id
+	@Basic(optional = false)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_expenses_id")
+	@Column(name = "id")
+	private Long				id;
+
+	@Basic(optional = false)
+	@Column(name = "document_no")
+	private String				documentNo;
+
+	@Basic(optional = false)
+	@Column(name = "document_date")
+	@Temporal(TemporalType.DATE)
+	private Date				documentDate;
+
+	@Basic(optional = false)
+	@Column(name = "price")
+	private double				price;
+
+	@Basic(optional = false)
+	@Column(name = "service_type_id")
+	private Long				serviceTypeId;
+
+	@Basic(optional = false)
+	@Column(name = "company_id")
+	private Long				companyId;
+
+	@Basic(optional = false)
+	@Column(name = "apartment_id")
+	private Long				apartmentId;
+
+	@Basic(optional = false)
+	@Column(name = "description")
+	private String				description;
+
+	@JoinColumn(name = "service_type_id", referencedColumnName = "id", insertable = false, updatable = false)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	private ServiceType			serviceType;
+
+	@JoinColumn(name = "company_id", referencedColumnName = "id", insertable = false, updatable = false)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	private Company				company;
+
+	@JoinColumn(name = "apartment_id", referencedColumnName = "id", insertable = false, updatable = false)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	private Apartment			apartment;
+
+	public Expense()
+	{
+	}
+
+	public Expense(Long id)
+	{
+		this.id = id;
+	}
+
+	public Expense(Long id, String documentNo, Date documentDate, double price)
+	{
+		this.id = id;
+		this.documentNo = documentNo;
+		this.documentDate = documentDate;
+		this.price = price;
+	}
+
+	public Long getId()
+	{
+		return id;
+	}
+
+	public void setId(Long id)
+	{
+		this.id = id;
+	}
+
+	public String getDocumentNo()
+	{
+		return documentNo;
+	}
+
+	public void setDocumentNo(String documentNo)
+	{
+		this.documentNo = documentNo;
+	}
+
+	public Date getDocumentDate()
+	{
+		return documentDate;
+	}
+
+	public void setDocumentDate(Date documentDate)
+	{
+		this.documentDate = documentDate;
+	}
+
+	public double getPrice()
+	{
+		return price;
+	}
+
+	public void setPrice(double price)
+	{
+		this.price = price;
+	}
+
+	public Long getServiceTypeId()
+	{
+		return serviceTypeId;
+	}
+
+	public void setServiceTypeId(Long serviceTypeId)
+	{
+		this.serviceTypeId = serviceTypeId;
+	}
+
+	public Long getCompanyId()
+	{
+		return companyId;
+	}
+
+	public void setCompanyId(Long companyId)
+	{
+		this.companyId = companyId;
+	}
+
+	public Long getApartmentId()
+	{
+		return apartmentId;
+	}
+
+	public void setApartmentId(Long apartmentId)
+	{
+		this.apartmentId = apartmentId;
+	}
+
+	public ServiceType getServiceType()
+	{
+		return serviceType;
+	}
+
+	public void setServiceType(ServiceType serviceType)
+	{
+		this.serviceType = serviceType;
+	}
+
+	public Company getCompany()
+	{
+		return company;
+	}
+
+	public void setCompany(Company company)
+	{
+		this.company = company;
+	}
+
+	public Apartment getApartment()
+	{
+		return apartment;
+	}
+
+	public void setApartment(Apartment apartment)
+	{
+		this.apartment = apartment;
+	}
+
+	public String getDescription()
+	{
+		return description;
+	}
+
+	public void setDescription(String description)
+	{
+		this.description = description;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int hash = 0;
+		hash += (id != null ? id.hashCode() : 0);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object object)
+	{
+		// TODO: Warning - this method won't work in the case the id fields are not set
+		if (!(object instanceof Expense))
+		{
+			return false;
+		}
+		Expense other = (Expense)object;
+		if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)))
+		{
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "com.hasanunlukilinc.sms.entities.Expense[ id=" + id + " ]";
+	}
+
+	public String getAppLogMessages()
+	{
+		return "Apartman Id: " + apartmentId + " Firma Id: " + companyId + " Belge Numarası: "
+				+ documentNo + " Belge Tarihi: " + documentDate + " Servis Tipi: " + serviceTypeId
+				+ " Ücret: " + price + " Açıklama: " + description;
+	}
+
+}

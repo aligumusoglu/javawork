@@ -1,0 +1,6 @@
+package com.aligumusoglu.javawork.dao;
+
+public interface DaoService {
+
+	public 
+}

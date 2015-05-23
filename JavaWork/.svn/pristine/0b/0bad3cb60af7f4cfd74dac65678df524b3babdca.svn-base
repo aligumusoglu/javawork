@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="detailed-month-balance_subreport1" language="groovy" pageWidth="595" pageHeight="802" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="076a19cf-3454-4417-b0ad-f7bf617f36f9">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="dues" class="java.lang.Double"/>
+	<parameter name="old_balance" class="java.lang.Double"/>
+	<parameter name="extra_dues" class="java.lang.Double"/>
+	<parameter name="apartment_id" class="java.lang.Integer"/>
+	<parameter name="first_date" class="java.util.Date"/>
+	<parameter name="second_date" class="java.util.Date"/>
+	<queryString>
+		<![CDATA[SELECT SUM(IR.price) as extra_dues, description, period FROM income_receivable IR
+ INNER JOIN receivable R ON R.id = IR.receivable_id
+ INNER JOIN extra_dues ER ON R.extra_dues_id = ER.id
+ WHERE service_type_id = 2 AND  IR.pay_date between $P{first_date} and $P{second_date}
+ AND R.apartment_id = $P{apartment_id} GROUP BY extra_dues_id,description, period]]>
+	</queryString>
+	<field name="extra_dues" class="java.lang.Double"/>
+	<field name="description" class="java.lang.String"/>
+	<field name="period" class="java.sql.Date"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField pattern="#,##0.00 TL">
+				<reportElement x="441" y="0" width="114" height="20" uuid="85f40595-27d2-468e-b114-0c76e7a6158a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{extra_dues}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="98" y="0" width="103" height="20" uuid="af42aa8d-65a7-4bd2-9229-e5c09d4ba976"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true" pdfEncoding="Cp1254"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
+			</textField>
+			<textField pattern="MMMM">
+				<reportElement x="0" y="0" width="51" height="20" uuid="f99e6545-d0f0-4402-a3cb-10eef6dcd503"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true" pdfEncoding="Cp1254"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{period}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="201" y="0" width="122" height="20" uuid="8d308d35-73ea-4d99-818d-cb9de0fe4d80"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true" pdfEncoding="Cp1254"/>
+				</textElement>
+				<text><![CDATA[Toplanan Ek Aidat]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="80" y="0" width="18" height="20" uuid="5329d8be-c84a-44a6-ad37-edf687d72dca"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true" pdfEncoding="Cp1254"/>
+				</textElement>
+				<text><![CDATA[Ayı]]></text>
+			</staticText>
+		</band>
+	</detail>
+	<columnFooter>
+		<band height="20" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="0" width="441" height="20" uuid="b8f2ca14-53c9-4e8e-a66a-c6f4fd34f2d8"/>
+				<textElement verticalAlignment="Middle">
+					<font isBold="true" pdfEncoding="Cp1254"/>
+				</textElement>
+				<text><![CDATA[TOPLAM KASA]]></text>
+			</staticText>
+			<line>
+				<reportElement x="1" y="2" width="553" height="1" uuid="ea00bb16-7369-49df-bd90-45fa1fe1bbe7"/>
+			</line>
+			<textField pattern="#,##0.00 TL">
+				<reportElement x="441" y="0" width="113" height="20" uuid="41644fbd-85a0-4d0e-9a53-fe71f9115ed6"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{dues}+$P{extra_dues}+$P{old_balance}]]></textFieldExpression>
+			</textField>
+		</band>
+	</columnFooter>
+</jasperReport>

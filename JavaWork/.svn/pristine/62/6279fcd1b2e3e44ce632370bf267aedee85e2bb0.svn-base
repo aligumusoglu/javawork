@@ -1,0 +1,105 @@
+package com.hasanunlukilinc.sms.entities;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.Objects;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+
+/**
+ *
+ * @author gngnew
+ */
+@Entity
+@Table(name = "overdue_interest")
+@NamedQueries({
+    @NamedQuery(name = "OverdueInterest.findAll", query = "SELECT o FROM OverdueInterest o")})
+@SequenceGenerator(name = "seq_overdue_interest", sequenceName = "seq_overdue_interest", allocationSize = 1)
+public class OverdueInterest extends BaseEntity implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+    @Id
+    @Column(name = "id")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_overdue_interest")
+    private Long id;
+
+    @Column(name = "interest_date")
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date interestDate;
+
+    @Column(name = "interest_rate")
+    private Double interestRate;
+
+    public OverdueInterest() {
+    }
+
+    public OverdueInterest(Long id) {
+        this.id = id;
+    }
+
+    public OverdueInterest(Long id, Date interestDate, Double interestRate) {
+        this.id = id;
+        this.interestDate = interestDate;
+        this.interestRate = interestRate;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Date getInterestDate() {
+        return interestDate;
+    }
+
+    public void setInterestDate(Date interestDate) {
+        this.interestDate = interestDate;
+    }
+
+    public Double getInterestRate() {
+        return interestRate;
+    }
+
+    public void setInterestRate(Double interestRate) {
+        this.interestRate = interestRate;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + Objects.hashCode(this.id);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final OverdueInterest other = (OverdueInterest) obj;
+        if (!Objects.equals(this.id, other.id)) {
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public String toString() {
+        return "com.hasanunlukilinc.sms.entities.OverdueInterest{" + "id=" + id + '}';
+    }
+
+}

@@ -1,0 +1,157 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.hasanunlukilinc.sms.dao;
+
+import java.util.List;
+
+import org.hibernate.Query;
+
+import com.hasanunlukilinc.sms.entities.Receivable;
+import com.hasanunlukilinc.sms.services.SessionProvider;
+
+/**
+ *
+ * @author gngnew
+ * @author hasan
+ */
+public class ReceivableDao extends BaseDao<Receivable>
+{
+
+	public ReceivableDao(SessionProvider sp)
+	{
+		super(sp);
+	}
+
+	/**
+	 * Verilen expenseId olan tüm kayıtların price kolununu verilen tutar yapar
+	 * @param expenseId
+	 * @param price
+	 */
+	public void updateReceivablesPriceByExpenseId(Long expenseId, Double price)
+	{
+		if (expenseId != null && expenseId != 0)
+		{
+			Query q = getSession().createQuery("UPDATE Receivable SET price = :price WHERE expenseId = :expenseId");
+			q.setDouble("price", price);
+			q.setLong("expenseId", expenseId);
+			q.executeUpdate();
+		}
+	}
+
+	public void deleteReceivablesByExpenseId(Long expenseId)
+	{
+		if (expenseId != null && expenseId != 0)
+		{
+			Query q = getSession().createQuery("DELETE FROM Receivable WHERE expenseId = :expenseId");
+			q.setLong("expenseId", expenseId);
+			q.executeUpdate();
+		}
+	}
+
+	/**
+	 * Verilen expenseId ile sorgulanan borçlardan ödemesi yapılan varmı sorgulanır Varsa liste dönderir.
+	 * @param expenseId
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Receivable> getReceivablesOfPaymentByExpense(Long expenseId)
+	{
+		List<Receivable> receivableList = null;
+		Query q = getSession().createQuery(
+				"SELECT R FROM Receivable as R WHERE R.expenseId = :expenseId AND R.incomeId IS NOT NULL");
+		q.setLong("expenseId", expenseId);
+		receivableList = q.list();
+		return receivableList;
+	}
+
+	/**
+	 * Verilen duesId olan tüm kayıtların price kolununu verilen tutar yapar
+	 * @param expenseId
+	 * @param price
+	 */
+	public void updateReceivablesPriceByDuesId(Long duesId, Double price)
+	{
+		if (duesId != null && duesId != 0)
+		{
+			Query q = getSession().createQuery("UPDATE Receivable SET price = :price WHERE duesId = :duesId");
+			q.setDouble("price", price);
+			q.setLong("duesId", duesId);
+			q.executeUpdate();
+		}
+	}
+
+	public void deleteReceivablesByDuesId(Long duesId)
+	{
+		if (duesId != null && duesId != 0)
+		{
+			Query q = getSession().createQuery("DELETE FROM Receivable WHERE duesId = :duesId");
+			q.setLong("duesId", duesId);
+			q.executeUpdate();
+		}
+	}
+
+	/**
+	 * Verilen duesId ile sorgulanan borçlardan ödemesi yapılan varmı sorgulanır Varsa liste dönderir.
+	 * @param duesId
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public List<Receivable> getReceivablesOfPaymentByDues(Long duesId)
+	{
+		List<Receivable> receivableList = null;
+		Query q = getSession().createQuery(
+				"SELECT R FROM Receivable as R WHERE R.duesId = :duesId AND R.incomeId IS NOT NULL");
+		q.setLong("duesId", duesId);
+		receivableList = q.list();
+		return receivableList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Receivable> fetchReceivablesByHouseId(Long houseId)
+	{
+		List<Receivable> receivableList = null;
+		Query q = getSession().createQuery(
+				"SELECT R FROM Receivable as R WHERE R.houseId = :houseId AND R.checkOut = :checkOut  ORDER BY R.period ASC");
+		q.setLong("houseId", houseId);
+		q.setBoolean("checkOut", false);
+		receivableList = q.list();
+		return receivableList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Receivable> fetchReceivablesByHouseIdAndYear(Long houseId, Integer year)
+	{
+		List<Receivable> receivableList = null;
+		Query q = getSession().createQuery(
+				"SELECT R FROM Receivable as R WHERE R.houseId = :houseId AND R.checkOut = :checkOut AND year(R.period) = :paramYear ORDER BY R.period ASC");
+		q.setLong("houseId", houseId);
+		q.setBoolean("checkOut", false);
+		q.setInteger("paramYear", year);
+		receivableList = q.list();
+		return receivableList;
+	}
+	
+	
+	@SuppressWarnings("unchecked")
+	public List<Receivable> fetchDebtListMonthly(Long houseId, Integer month, Integer year)
+	{
+		List<Receivable> receivableList = null;
+		Query q = getSession().createQuery(
+				"SELECT R FROM Receivable as R WHERE houseId = :houseId AND checkOut = :checkOut"
+			    +" AND year(period) = :paramYear AND month(period) = :paramMonth ");
+		q.setLong("houseId", houseId);
+		q.setBoolean("checkOut", false);
+		q.setInteger("paramYear", year);
+		q.setInteger("paramMonth", month);
+		receivableList = q.list();
+		for(Receivable r : receivableList)
+		{
+			System.out.println(r.getPrice());
+		}
+		return receivableList;
+	}
+
+}

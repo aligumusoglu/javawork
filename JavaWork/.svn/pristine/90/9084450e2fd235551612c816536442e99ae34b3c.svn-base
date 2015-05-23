@@ -1,0 +1,24 @@
+package com.hasanunlukilinc.sms.application;
+
+/**
+ *
+ * @author gngnew
+ */
+public enum Permission
+{
+
+	TEST("");
+
+	private String	formName;
+
+	private Permission(String formName)
+	{
+		this.formName = formName;
+	}
+
+	public String getFormName()
+	{
+		return formName;
+	}
+
+}

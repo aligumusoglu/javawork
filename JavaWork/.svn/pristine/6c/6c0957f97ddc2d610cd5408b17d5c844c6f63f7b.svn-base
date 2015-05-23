@@ -1,0 +1,69 @@
+package com.hasanunlukilinc.sms.dao;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
+
+import com.hasanunlukilinc.sms.entities.Dues;
+import com.hasanunlukilinc.sms.services.SessionProvider;
+
+/**
+ * 
+ * @author hasan
+ *
+ */
+public class DuesDao extends BaseDao<Dues>
+{
+
+	public DuesDao(SessionProvider sp)
+	{
+		super(sp);
+	}
+
+	public Dues checkDues(Long apartmentId, Date duesDate)
+	{
+		Dues dues = null;
+		Criteria criteria = createCriteria(Dues.class);
+		criteria.add(Restrictions.eq("apartmentId", apartmentId));
+		criteria.add(Restrictions.eq("duesDate", duesDate));
+		dues = (Dues)criteria.uniqueResult();
+		return dues;
+	}
+
+	public void deleteDuesById(Long duesId)
+	{
+		if (duesId != null && duesId != 0)
+		{
+			Query q = getSession().createQuery("DELETE FROM Dues WHERE id = :id");
+			q.setLong("id", duesId);
+			q.executeUpdate();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Dues> fetchDuesListBySearch(Long apartmentId, Integer month, Integer year)
+	{
+		List<Dues> duesList = new ArrayList<Dues>();
+		String qstr = "SELECT d FROM Dues d WHERE 1=1 ";
+		if (year != 0)
+			qstr += "AND year(d.duesDate) = :year ";
+		if (month != 0)
+			qstr += "AND month(d.duesDate) = :month ";
+		if (apartmentId != 0)
+			qstr += "AND apartmentId = :apartmentId ";
+		Query q = getSession().createQuery(qstr);
+		if (year != 0)
+			q.setInteger("year", year);
+		if (month != 0)
+			q.setInteger("month", month);
+		if (apartmentId != 0)
+			q.setLong("apartmentId", apartmentId);
+		duesList = q.list();
+		return duesList;
+
+	}
+}

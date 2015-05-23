@@ -1,0 +1,23 @@
+package com.aligumusoglu.javawork.model;
+
+public class AppLog {
+	private Integer appLogType;
+	private String definition;
+
+	public Integer getAppLogType() {
+		return appLogType;
+	}
+
+	public String getDefinition() {
+		return definition;
+	}
+
+	public void setAppLogType(Integer appLogType) {
+		this.appLogType = appLogType;
+	}
+
+	public void setDefinition(String definition) {
+		this.definition = definition;
+	}
+
+}

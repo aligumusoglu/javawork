@@ -1,0 +1,171 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<f:view contentType="text/html">
+	<h:head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<h:outputStylesheet name="./css/default.css" />
+		<h:outputScript name="./js/default.js" />
+		<title>Profesyonel # <ui:insert name="title">Site Yönetimi</ui:insert>
+		</title>
+		<ui:insert name="head">
+
+		</ui:insert>
+	</h:head>
+
+	<h:body>
+
+		<p:idleMonitor timeout="1800000" onidle="showDialog('idleDialog');" />
+
+		<p:dialog header="Oturum Kapanmıştır" resizable="false"
+			widgetVar="idleDialog" modal="true" width="400" closable="false">
+			<h:outputText
+				value="Oturum kapanmıştır. Tekrar giriş yapmak için lütfen tıklayın" />
+			<br />
+			<h:outputLink value="login.xhtml">Giriş</h:outputLink>
+		</p:dialog>
+
+		<p:growl id="growl" widgetVar="wdgrowl" showDetail="true" />
+
+		<p:dialog showHeader="false" widgetVar="dlgWait" modal="true"
+			resizable="false" width="160">
+			<p:graphicImage value="/resources/images/big_loader1.gif" />
+		</p:dialog>
+
+		<table style="width: 100%;">
+			<tr>
+				<td><h:form prependId="false">
+						<p:menubar style="border: none !important;">
+
+							<p:menuitem value="Ana Sayfa" url="main-page.xhtml" />
+
+							<p:menuitem value="Gelir İşlemleri" url="income.xhtml" />
+
+							<p:menuitem value="Gelir Makbuz Listesi" url="income-list.xhtml" />
+
+							<p:menuitem value="Aidat Ekleme" url="dues.xhtml" />
+
+							<p:menuitem value="Ek Aidat Ekleme" url="extra-dues.xhtml" />
+							
+							<p:menuitem value="Bireysel Borçlandırma" url="personal-debt.xhtml" />
+
+							<p:menuitem value="Gider İşlemleri" url="expenses.xhtml" />
+
+							<p:menuitem value="Raporlama İşlemleri" url="report.xhtml" />
+
+							<p:submenu label="Tanımlamalar">
+								<p:menuitem value="Site İşlemleri" url="apartments.xhtml" />
+								<p:menuitem value="Firma İşlemleri" url="company.xhtml" />
+								<p:menuitem value="Şahıs İşlemleri" url="person.xhtml" />
+								<p:menuitem value="Kapıcı İşlemleri" url="janitor.xhtml" />
+								<p:menuitem value="Hizmet Türü İşlemleri"
+									url="service-type.xhtml" />
+								<p:menuitem value="Faiz Ayarları" url="overdue-interest.xhtml" />
+							</p:submenu>
+							
+							<p:submenu label="Tema">
+								<p:menuitem value="AfterDark" actionListener="#{sessionBean.setTheme('afterdark')}" ajax="false" icon="#{sessionBean.theme=='afterdark'?'ui-icon-check':'ui-icon-empty'}" />
+								<p:menuitem value="Afternoon" actionListener="#{sessionBean.setTheme('afternoon')}" ajax="false" icon="#{sessionBean.theme=='afternoon'?'ui-icon-check':''}"/>
+								<p:menuitem value="Afterwork" actionListener="#{sessionBean.setTheme('afterwork')}" ajax="false" icon="#{sessionBean.theme=='afterwork'?'ui-icon-check':''}"/>
+								<p:menuitem value="Aristo" actionListener="#{sessionBean.setTheme('aristo')}" ajax="false" icon="#{sessionBean.theme=='aristo'?'ui-icon-check':''}"/>
+								<p:menuitem value="Black-Tie" actionListener="#{sessionBean.setTheme('black-tie')}" ajax="false" icon="#{sessionBean.theme=='black-tie'?'ui-icon-check':''}"/>
+								<p:menuitem value="Blitzer" actionListener="#{sessionBean.setTheme('blitzer')}" ajax="false" icon="#{sessionBean.theme=='blitzer'?'ui-icon-check':''}"/>
+								<p:menuitem value="BlueSky" actionListener="#{sessionBean.setTheme('bluesky')}" ajax="false" icon="#{sessionBean.theme=='bluesky'?'ui-icon-check':''}"/>
+								<p:menuitem value="BootStrap" actionListener="#{sessionBean.setTheme('bootstrap')}" ajax="false" icon="#{sessionBean.theme=='bootstrap'?'ui-icon-check':''}"/>
+								<p:menuitem value="Casablanca" actionListener="#{sessionBean.setTheme('casablanca')}" ajax="false" icon="#{sessionBean.theme=='casablanca'?'ui-icon-check':''}"/>
+								<p:menuitem value="Cupertino" actionListener="#{sessionBean.setTheme('cupertino')}" ajax="false" icon="#{sessionBean.theme=='cupertino'?'ui-icon-check':''}"/>
+								<p:menuitem value="Cruze" actionListener="#{sessionBean.setTheme('cruze')}" ajax="false" icon="#{sessionBean.theme=='cruze'?'ui-icon-check':''}"/>
+								<p:menuitem value="Dark-Hive" actionListener="#{sessionBean.setTheme('dark-hive')}" ajax="false" icon="#{sessionBean.theme=='dark-hive'?'ui-icon-check':''}"/>
+								<p:menuitem value="Delta" actionListener="#{sessionBean.setTheme('delta')}" ajax="false" icon="#{sessionBean.theme=='delta'?'ui-icon-check':''}"/>
+								<p:menuitem value="Eggplant" actionListener="#{sessionBean.setTheme('eggplant')}" ajax="false" icon="#{sessionBean.theme=='eggplant'?'ui-icon-check':''}"/>
+								<p:menuitem value="Excite-Bike" actionListener="#{sessionBean.setTheme('excite-bike')}" ajax="false" icon="#{sessionBean.theme=='excite-bike'?'ui-icon-check':''}"/>
+								<p:menuitem value="Flick" actionListener="#{sessionBean.setTheme('flick')}" ajax="false" icon="#{sessionBean.theme=='flick'?'ui-icon-check':''}"/>
+								<p:menuitem value="Glass-X" actionListener="#{sessionBean.setTheme('glass-x')}" ajax="false" icon="#{sessionBean.theme=='glass-x'?'ui-icon-check':''}"/>
+								<p:menuitem value="Home" actionListener="#{sessionBean.setTheme('home')}" ajax="false" icon="#{sessionBean.theme=='home'?'ui-icon-check':''}"/>
+								<p:menuitem value="Hot-Sneaks" actionListener="#{sessionBean.setTheme('hot-sneaks')}" ajax="false" icon="#{sessionBean.theme=='hot-sneaks'?'ui-icon-check':''}"/>
+								<p:menuitem value="Humanity" actionListener="#{sessionBean.setTheme('humanity')}" ajax="false" icon="#{sessionBean.theme=='humanity'?'ui-icon-check':''}"/>
+								<p:menuitem value="Le-Frog" actionListener="#{sessionBean.setTheme('le-frog')}" ajax="false" icon="#{sessionBean.theme=='le-frog'?'ui-icon-check':''}"/>
+								<p:menuitem value="Midnight" actionListener="#{sessionBean.setTheme('midnight')}" ajax="false" icon="#{sessionBean.theme=='midnight'?'ui-icon-check':''}"/>
+								<p:menuitem value="Mint-Choc" actionListener="#{sessionBean.setTheme('mint-choc')}" ajax="false" icon="#{sessionBean.theme=='mint-choc'?'ui-icon-check':''}"/>
+								<p:menuitem value="Overcast" actionListener="#{sessionBean.setTheme('overcast')}" ajax="false" icon="#{sessionBean.theme=='overcast'?'ui-icon-check':''}"/>
+								<p:menuitem value="Pepper-Grinder" actionListener="#{sessionBean.setTheme('pepper-grinder')}" ajax="false" icon="#{sessionBean.theme=='pepper-grinder'?'ui-icon-check':''}"/>
+								<p:menuitem value="Redmond" actionListener="#{sessionBean.setTheme('redmond')}" ajax="false" icon="#{sessionBean.theme=='redmond'?'ui-icon-check':''}"/>
+								<p:menuitem value="Rocket" actionListener="#{sessionBean.setTheme('rocket')}" ajax="false" icon="#{sessionBean.theme=='rocket'?'ui-icon-check':''}"/>
+								<p:menuitem value="Sam" actionListener="#{sessionBean.setTheme('sam')}" ajax="false" icon="#{sessionBean.theme=='sam'?'ui-icon-check':''}"/>
+								<p:menuitem value="Smoothness" actionListener="#{sessionBean.setTheme('smoothness')}" ajax="false" icon="#{sessionBean.theme=='smoothness'?'ui-icon-check':''}"/>
+								<p:menuitem value="South-Street" actionListener="#{sessionBean.setTheme('south-street')}" ajax="false" icon="#{sessionBean.theme=='south-street'?'ui-icon-check':''}"/>
+								<p:menuitem value="Start" actionListener="#{sessionBean.setTheme('start')}" ajax="false" icon="#{sessionBean.theme=='start'?'ui-icon-check':''}"/>
+								<p:menuitem value="Sunny" actionListener="#{sessionBean.setTheme('sunny')}" ajax="false" icon="#{sessionBean.theme=='sunny'?'ui-icon-check':''}"/>
+								<p:menuitem value="Swanky-Purse" actionListener="#{sessionBean.setTheme('swanky-purse')}" ajax="false" icon="#{sessionBean.theme=='swanky-purse'?'ui-icon-check':''}"/>
+								<p:menuitem value="Trontastic" actionListener="#{sessionBean.setTheme('trontastic')}" ajax="false" icon="#{sessionBean.theme=='trontastic'?'ui-icon-check':''}"/>
+								<p:menuitem value="UI-Darkness" actionListener="#{sessionBean.setTheme('ui-darkness')}" ajax="false" icon="#{sessionBean.theme=='ui-darkness'?'ui-icon-check':''}"/>
+								<p:menuitem value="UI-Lightness" actionListener="#{sessionBean.setTheme('ui-lightness')}" ajax="false" icon="#{sessionBean.theme=='ui-lightness'?'ui-icon-check':''}"/>
+								<p:menuitem value="Vader" actionListener="#{sessionBean.setTheme('vader')}" ajax="false" icon="#{sessionBean.theme=='vader'?'ui-icon-check':''}"/>                                           
+                           </p:submenu>
+
+							<p:submenu label="Yönetim">
+								<p:menuitem value="Kullanıcılar" url="users.xhtml" />
+								<p:menuitem value="Kurum Bilgileri" url="info.xhtml" />
+								<p:menuitem value="Uygulama Geçmişi" url="log.xhtml" />
+								<p:menuitem value="Rapor Yetkileri" url="report-permission.xhtml" />
+								<p:menuitem value="Bilanço Yapılandırma" url="balance-configuration.xhtml" />
+							</p:submenu>
+
+							<p:submenu label="Kullanıcı : #{sessionBean.user.username}">
+								<p:menuitem value="Çıkış" action="#{sessionBean.logout()}"
+									ajax="false" />
+							</p:submenu>
+							
+							
+
+						</p:menubar>
+					</h:form></td>
+			</tr>
+			<tr>
+				<td id="content"><p:tooltip /> <p:fieldset>
+						<f:facet name="legend">
+							<ui:insert name="title">Title</ui:insert>
+						</f:facet>
+						<ui:insert name="content">Content</ui:insert>
+					</p:fieldset></td>
+			</tr>
+		</table>
+
+		<script type="text/javascript">  
+    PrimeFaces.locales['tr'] = {
+    closeText: 'kapat',
+    prevText: 'geri',
+    nextText: 'ileri',
+    currentText: 'bugün',
+    monthNames: ['Ocak','Şubat','Mart','Nisan','Mayıs','Haziran','Temmuz','Ağustos','Eylül','Ekim','Kasım','Aralık'],
+    monthNamesShort: ['Oca','Şub','Mar','Nis','May','Haz', 'Tem','Ağu','Eyl','Eki','Kas','Ara'],
+    dayNames: ['Pazar','Pazartesi','Salı','Çarşamba','Perşembe','Cuma','Cumartesi'],
+    dayNamesShort: ['Pz','Pt','Sa','Ça','Pe','Cu','Ct'],
+    dayNamesMin: ['Pz','Pt','Sa','Ça','Pe','Cu','Ct'],
+    weekHeader: 'Hf',
+    firstDay: 1,
+    isRTL: false,
+    showMonthAfterYear: false,
+    yearSuffix: '',
+    timeOnlyTitle: 'Zaman Seçiniz',
+    timeText: 'Zaman',
+    hourText: 'Saat',
+    minuteText: 'Dakika',
+    secondText: 'Saniye',
+    ampm: false,
+    month: 'Ay',
+    week: 'Hafta',
+    day: 'Gün',
+    allDayText : 'Tüm Gün'
+};
+</script>
+
+	</h:body>
+</f:view>
+</html>

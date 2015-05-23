@@ -1,0 +1,24 @@
+package com.aligumusoglu.javawork.dao;
+
+import java.awt.List;
+
+import com.aligumusoglu.javawork.enums.PublicResult;
+
+/**
+ * 
+ * @author Ali
+ *
+ */
+public class UserDao extends BaseDao
+{
+
+	public PublicResult save()
+	{
+		PublicResult result = PublicResult.FAIL;
+		
+		
+		return result;
+	}
+	
+	public List<User>
+}

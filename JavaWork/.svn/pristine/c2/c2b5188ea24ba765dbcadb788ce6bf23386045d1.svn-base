@@ -1,0 +1,187 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.hasanunlukilinc.sms.entities;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+/**
+ *
+ * @author gngnew
+ */
+@Entity
+@Table(name = "month_balance")
+@NamedQueries({@NamedQuery(name = "MonthBalance.findAll", query = "SELECT m FROM MonthBalance m")})
+@SequenceGenerator(name = "seq_monthbalance_id", sequenceName = "seq_monthbalance_id", allocationSize = 1)
+public class MonthBalance extends BaseEntity implements Serializable
+{
+	private static final long	serialVersionUID	= 1L;
+	@Id
+	@Basic(optional = false)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_monthbalance_id")
+	@Column(name = "id")
+	private Long				id;
+
+	@Basic(optional = false)
+	@Column(name = "balance_date")
+	@Temporal(TemporalType.DATE)
+	private Date				balanceDate;
+
+	@Basic(optional = false)
+	@Column(name = "total_income")
+	private double				totalIncome;
+
+	@Basic(optional = false)
+	@Column(name = "total_expenses")
+	private double				totalExpenses;
+
+	@Basic(optional = false)
+	@Column(name = "balance")
+	private double				balance;
+
+	@Basic(optional = false)
+	@Column(name = "apartment_id")
+	private Long				apartmentId;
+
+	@JoinColumn(name = "apartment_id", referencedColumnName = "id", insertable = false, updatable = false)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	private Apartment			aparment;
+
+	public MonthBalance()
+	{
+	}
+
+	public MonthBalance(Long id)
+	{
+		this.id = id;
+	}
+
+	public MonthBalance(Long id, Date balanceDate, double totalIncome, double totalExpenses, double balance)
+	{
+		this.id = id;
+		this.balanceDate = balanceDate;
+		this.totalIncome = totalIncome;
+		this.totalExpenses = totalExpenses;
+		this.balance = balance;
+	}
+
+	public Long getId()
+	{
+		return id;
+	}
+
+	public void setId(Long id)
+	{
+		this.id = id;
+	}
+
+	public Date getBalanceDate()
+	{
+		return balanceDate;
+	}
+
+	public void setBalanceDate(Date balanceDate)
+	{
+		this.balanceDate = balanceDate;
+	}
+
+	public double getTotalIncome()
+	{
+		return totalIncome;
+	}
+
+	public void setTotalIncome(double totalIncome)
+	{
+		this.totalIncome = totalIncome;
+	}
+
+	public double getTotalExpenses()
+	{
+		return totalExpenses;
+	}
+
+	public void setTotalExpenses(double totalExpenses)
+	{
+		this.totalExpenses = totalExpenses;
+	}
+
+	public double getBalance()
+	{
+		return balance;
+	}
+
+	public void setBalance(double balance)
+	{
+		this.balance = balance;
+	}
+
+	public Long getApartmentId()
+	{
+		return apartmentId;
+	}
+
+	public void setApartmentId(Long apartmentId)
+	{
+		this.apartmentId = apartmentId;
+	}
+
+	public Apartment getAparment()
+	{
+		return aparment;
+	}
+
+	public void setAparment(Apartment aparment)
+	{
+		this.aparment = aparment;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int hash = 0;
+		hash += (id != null ? id.hashCode() : 0);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object object)
+	{
+		// TODO: Warning - this method won't work in the case the id fields are not set
+		if (!(object instanceof MonthBalance))
+		{
+			return false;
+		}
+		MonthBalance other = (MonthBalance)object;
+		if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)))
+		{
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "com.hasanunlukilinc.sms.entities.MonthBalance[ id=" + id + " ]";
+	}
+
+}

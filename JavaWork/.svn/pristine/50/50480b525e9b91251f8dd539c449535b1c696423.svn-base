@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      lang="tr">
+    
+    <f:metadata>
+        <f:event type="preRenderView" listener="#{sessionBean.setCurrentPage(1)}" />
+    </f:metadata>
+
+    <h:body>
+        <ui:composition template="./template.xhtml">
+		<ui:define name="title">Site Yönetici</ui:define>
+		<ui:define name="head"></ui:define>
+		<ui:define name="content">
+                <h3>Meskenler</h3>
+                <!--// MESKENLER -->
+                <h:form>
+                <table class="table">
+                    <ui:repeat value="#{sessionBean.houseList}" var="house">
+                        <tr>
+                            <td><a href="mesken.xhtml"><h4>
+                                <p:commandButton style="border:none; background:none;" 
+                                value="#{house.block.apartment.name}, #{house.block.blockName}, #{house.houseNumber}"
+                                action="#{houseBean.onClickDebtDetails(house)}"/>        
+                                    </h4></a></td>
+                        </tr>
+                    </ui:repeat>
+                </table>
+                </h:form>
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

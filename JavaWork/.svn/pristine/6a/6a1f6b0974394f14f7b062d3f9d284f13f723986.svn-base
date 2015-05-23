@@ -1,0 +1,6 @@
+package com.hasanunlukilinc.sms.application;
+
+public enum PublicResult
+{
+	SUCCESS, FAIL, DUPLICATE, FOREING, OLD_DATE, HOUSE_LIST_EMPYT, CONCTRACT_NULL,HOUSE_LIST_AND_CONTRACT_NULL
+}

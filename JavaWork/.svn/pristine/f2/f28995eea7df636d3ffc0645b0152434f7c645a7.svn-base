@@ -1,0 +1,39 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.hasanunlukilinc.sms.dao;
+
+import java.util.List;
+
+import org.hibernate.Criteria;
+import org.hibernate.criterion.Restrictions;
+
+import com.hasanunlukilinc.sms.entities.Apartment;
+import com.hasanunlukilinc.sms.services.SessionProvider;
+
+/**
+ *
+ * @author gngnew
+ * @author hasan
+ */
+public class ApartmentDao extends BaseDao<Apartment>
+{
+
+	public ApartmentDao(SessionProvider sp)
+	{
+		super(sp);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Apartment> getActiveApartmentList()
+	{
+		List<Apartment> list = null;
+		Criteria criteria = createCriteria(Apartment.class);
+		criteria.add(Restrictions.eq("active", true));
+		list = (List<Apartment>)criteria.list();
+		return list;
+	}
+
+}

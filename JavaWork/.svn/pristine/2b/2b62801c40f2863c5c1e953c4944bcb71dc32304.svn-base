@@ -1,0 +1,55 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.hasanunlukilinc.sms.dao;
+
+import java.util.List;
+
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
+
+import com.hasanunlukilinc.sms.entities.Company;
+import com.hasanunlukilinc.sms.services.SessionProvider;
+
+/**
+ *
+ * @author gngnew
+ */
+public class CompanyDao extends BaseDao<Company>
+{
+
+	public CompanyDao(SessionProvider sp)
+	{
+		super(sp);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Company> getCompanyList()
+	{
+		List<Company> list = null;
+		list = getSession().createCriteria(Company.class).list();
+		return list;
+	}
+
+	public Company checkCompany(String taxNumber)
+	{
+		Company company = null;
+		Criteria criteria = createCriteria(Company.class);
+		criteria.add(Restrictions.eq("taxNumber", taxNumber));
+		company = (Company)criteria.uniqueResult();
+		return company;
+	}
+
+	public void deleteCompany(Long id)
+	{
+		if (id != null && id != 0)
+		{
+			Query q = getSession().createQuery("DELETE FROM Company WHERE id = :companyId");
+			q.setLong("companyId", id);
+			q.executeUpdate();
+		}
+	}
+}

@@ -1,0 +1,75 @@
+package com.hasanunlukilinc.sms.entities;
+
+import java.util.List;
+
+public class MonthBalanceReport {
+
+	private double dues;
+	private double extraDues;
+	private double oldBalance 		= 0.0;
+	private double totalExpenses;
+	
+	private String authorName;
+	private String monthName;
+	private String oldMonthName;
+	
+	private List<Expense> expenses;
+	
+	
+	public double getDues() {
+		return dues;
+	}
+	public void setDues(double dues) {
+		this.dues = dues;
+	}
+	public double getExtraDues() {
+		return extraDues;
+	}
+	public void setExtraDues(double extraDues) {
+		this.extraDues = extraDues;
+	}
+	public double getOldBalance() {
+		return oldBalance;
+	}
+	public void setOldBalance(double oldBalance) {
+		this.oldBalance = oldBalance;
+	}
+	public String getAuthorName() {
+		return authorName;
+	}
+	public void setAuthorName(String authorName) {
+		this.authorName = authorName;
+	}
+	public String getMonthName() {
+		return monthName;
+	}
+	public void setMonthName(String monthName) {
+		this.monthName = monthName;
+	}
+	public String getOldMonthName() {
+		return oldMonthName;
+	}
+	public void setOldMonthName(String oldMonthName) {
+		this.oldMonthName = oldMonthName;
+	}
+	
+	public List<Expense> getExpenses() {
+		return expenses;
+	}
+	
+	public void setExpenses(List<Expense> expenses) {
+		this.expenses = expenses;
+	}
+	
+	public double getTotalExpenses() {
+		totalExpenses = 0.0;
+		for(Expense e : expenses)
+			totalExpenses += e.getPrice();
+		return totalExpenses;
+	}
+	
+	public void setTotalExpenses(double totalExpenses) {
+		this.totalExpenses = totalExpenses;
+	}
+	
+}

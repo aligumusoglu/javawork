@@ -1,0 +1,11 @@
+package com.hasanunlukilinc.sms.application;
+
+/**
+ *
+ * @author GUNGOR
+ */
+public interface Constants {
+    
+
+    
+}

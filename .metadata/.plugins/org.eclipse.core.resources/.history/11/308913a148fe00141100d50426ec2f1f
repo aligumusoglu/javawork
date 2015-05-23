@@ -1,0 +1,31 @@
+.ui-widget {
+    font-size: 12px;
+}
+.ui-panelgrid td, .ui-panelgrid tr {
+    border-style: none !important;
+    padding-left: 0px;
+}
+
+.lose-bet{
+    color:#ffffff;
+    text-shadow:1px 1px 1px rgba(0,0,0,0.4);
+    background: #a50000;
+}
+.win-bet{
+    color:#ffffff;
+    text-shadow:1px 1px 1px rgba(0,0,0,0.4);
+    background: #0d7914;
+}
+.void-bet{
+    color:#ffffff;
+    text-shadow:1px 1px 1px rgba(0,0,0,0.4);
+    background: #c08300;
+}
+
+.rightAlinedColumn {
+    text-align: right;
+}
+
+.verticalAlignTopColumn {
+    vertical-align: top;
+}

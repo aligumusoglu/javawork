@@ -1,0 +1,99 @@
+package com.hasanunlukilinc.sms.beans;
+
+import com.hasanunlukilinc.sms.entities.House;
+import com.hasanunlukilinc.sms.entities.Person;
+import com.hasanunlukilinc.sms.entities.User;
+import com.hasanunlukilinc.sms.services.ServiceFactory;
+import java.io.Serializable;
+import java.util.List;
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.SessionScoped;
+import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpServletRequest;
+
+/**
+ *
+ * @author Gungor Akbiyik <gungor.akbiyik at gmail.com>
+ */
+@ManagedBean(name = "sessionBean")
+@SessionScoped
+public class SessionBean implements Serializable {
+
+    private Person 			person;
+    private String 			currentIpAddress;
+    private String 			theme = "aristo";
+    private ServiceFactory  serviceFactory;
+    private List<House> 	houseList;
+    private House			selectedHouse;
+    private Integer 		currentPage;
+
+    /**
+     * Creates a new instance of SessionBean
+     */
+    public SessionBean() {
+    }
+
+    @PostConstruct
+    private void postConstruct() {
+        HttpServletRequest request = (HttpServletRequest) FacesContext.getCurrentInstance().getExternalContext()
+                .getRequest();
+        currentIpAddress = request.getRemoteAddr();
+        serviceFactory = new ServiceFactory();
+    }
+
+    public ServiceFactory getServiceFactory() {
+        return serviceFactory;
+    }
+
+    public String getTheme() {
+        return theme;
+    }
+
+    public void setTheme(String theme) {
+        this.theme = theme;
+    }
+
+    public Person getPerson() {
+        return person;
+    }
+
+    public void setPerson(Person person) {
+        this.person = person;
+    }
+
+   
+    public String getCurrentIpAddress() {
+        return currentIpAddress;
+    }
+
+    public List<House> getHouseList() {
+        return houseList;
+    }
+
+    public void setHouseList(List<House> houseList) {
+        this.houseList = houseList;
+    }
+
+    public Integer getCurrentPage() {
+        return currentPage;
+    }
+
+    public void setCurrentPage(Integer currentPage) {
+        this.currentPage = currentPage;
+    }
+    
+    public House getSelectedHouse() {
+		return selectedHouse;
+	}
+    
+    public void setSelectedHouse(House selectedHouse) {
+		this.selectedHouse = selectedHouse;
+	}
+    
+    public String logout() {
+        this.person = null;
+        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
+        return "login.xhtml?faces-redirect=true";
+    }
+}

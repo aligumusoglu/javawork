@@ -1,0 +1,29 @@
+package com.hasanunlukilinc.sms.beans;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import com.hasanunlukilinc.sms.entities.ReportPermission;
+import com.hasanunlukilinc.sms.enums.ReportType;
+
+
+/**
+ * @author Dilber Iyidiker
+ *
+ */
+@ManagedBean
+@ViewScoped
+public class ReportPermissionBean extends BaseBean
+{
+	private static final long		serialVersionUID	= 1L;
+	public ReportPermissionBean()
+	{
+
+	}
+
+	@PostConstruct
+	private void initBean()
+	{
+	}
+
+}

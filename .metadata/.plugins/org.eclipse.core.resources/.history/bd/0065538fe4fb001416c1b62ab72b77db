@@ -1,0 +1,39 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+<f:view contentType="text/html">
+	<h:head>
+		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+		<h:outputStylesheet name="./css/default.css" />
+		<h:outputScript name="./js/default.js" />
+		<title>Profesyonel # <ui:insert name="title">Site Yönetimi</ui:insert>
+		</title>
+		<ui:insert name="head">
+
+		</ui:insert>
+	</h:head>
+
+	<h:body>
+
+		<p:growl id="growl" widgetVar="wdgrowl" showDetail="true" />
+
+		<p:dialog showHeader="false" widgetVar="dlgWait" modal="true"
+			resizable="false" width="160">
+			<p:graphicImage value="/resources/images/big_loader1.gif" />
+		</p:dialog>
+
+
+
+		<script type="text/javascript">  
+    
+</script>
+
+	</h:body>
+</f:view>
+</html>

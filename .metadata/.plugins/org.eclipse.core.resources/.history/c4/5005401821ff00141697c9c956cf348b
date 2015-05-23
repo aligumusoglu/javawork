@@ -1,0 +1,17 @@
+package com.aligumusoglu.javawork.dao;
+
+import com.mongodb.DB;
+import com.mongodb.MongoClient;
+
+public class BaseDao {
+
+	MongoClient mongoClient = null;
+	DB database = null;
+
+	public DB getConnection() throws Exception {
+		if (mongoClient == null)
+			mongoClient = new MongoClient("localhost", 27017);
+
+		return database = mongoClient.getDB("JavaWork");
+	}
+}

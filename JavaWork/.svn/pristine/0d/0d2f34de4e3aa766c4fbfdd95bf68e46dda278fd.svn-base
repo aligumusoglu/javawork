@@ -1,0 +1,187 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.hasanunlukilinc.sms.entities;
+
+import java.io.Serializable;
+import java.util.Date;
+
+import javax.persistence.Basic;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+/**
+ *
+ * @author gngnew
+ */
+@Entity
+@Table(name = "app_log")
+@NamedQueries({@NamedQuery(name = "AppLog.findAll", query = "SELECT a FROM AppLog a")})
+@SequenceGenerator(name = "seq_applog_id", sequenceName = "seq_applog_id", allocationSize = 1)
+public class AppLog extends BaseEntity implements Serializable
+{
+	private static final long	serialVersionUID	= 1L;
+	@Id
+	@Basic(optional = false)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_applog_id")
+	@Column(name = "id")
+	private Long				id;
+
+	@Basic(optional = false)
+	@Column(name = "app_log_type")
+	private int					appLogType;
+
+	@Basic(optional = false)
+	@Column(name = "definition")
+	private String				definition;
+
+	@Basic(optional = false)
+	@Column(name = "process_type")
+	private int					processType;
+
+	@Basic(optional = false)
+	@Column(name = "process_date")
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date				processDate;
+
+	@Basic(optional = false)
+	@Column(name = "user_id")
+	private Long				userId;
+
+	@JoinColumn(name = "user_id", referencedColumnName = "user_id", insertable = false, updatable = false)
+	@ManyToOne(optional = false, fetch = FetchType.LAZY)
+	private User				user;
+
+	public AppLog()
+	{
+	}
+
+	public AppLog(Long id)
+	{
+		this.id = id;
+	}
+
+	public AppLog(Long id, int appLogType, String definition, int processType, Date processDate)
+	{
+		this.id = id;
+		this.appLogType = appLogType;
+		this.definition = definition;
+		this.processType = processType;
+		this.processDate = processDate;
+	}
+
+	public Long getId()
+	{
+		return id;
+	}
+
+	public void setId(Long id)
+	{
+		this.id = id;
+	}
+
+	public int getAppLogType()
+	{
+		return appLogType;
+	}
+
+	public void setAppLogType(int appLogType)
+	{
+		this.appLogType = appLogType;
+	}
+
+	public String getDefinition()
+	{
+		return definition;
+	}
+
+	public void setDefinition(String definition)
+	{
+		this.definition = definition;
+	}
+
+	public int getProcessType()
+	{
+		return processType;
+	}
+
+	public void setProcessType(int processType)
+	{
+		this.processType = processType;
+	}
+
+	public Date getProcessDate()
+	{
+		return processDate;
+	}
+
+	public void setProcessDate(Date processDate)
+	{
+		this.processDate = processDate;
+	}
+
+	public Long getUserId()
+	{
+		return userId;
+	}
+
+	public void setUserId(Long userId)
+	{
+		this.userId = userId;
+	}
+
+	public User getUser()
+	{
+		return user;
+	}
+
+	public void setUser(User user)
+	{
+		this.user = user;
+	}
+
+	@Override
+	public int hashCode()
+	{
+		int hash = 0;
+		hash += (id != null ? id.hashCode() : 0);
+		return hash;
+	}
+
+	@Override
+	public boolean equals(Object object)
+	{
+		// TODO: Warning - this method won't work in the case the id fields are not set
+		if (!(object instanceof AppLog))
+		{
+			return false;
+		}
+		AppLog other = (AppLog)object;
+		if ((this.id == null && other.id != null) || (this.id != null && !this.id.equals(other.id)))
+		{
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public String toString()
+	{
+		return "com.hasanunlukilinc.sms.entities.AppLog[ id=" + id + " ]";
+	}
+
+}

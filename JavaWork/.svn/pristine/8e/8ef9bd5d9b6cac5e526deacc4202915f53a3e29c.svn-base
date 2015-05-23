@@ -1,0 +1,69 @@
+package com.hasanunlukilinc.sms.dao;
+
+import com.hasanunlukilinc.sms.entities.User;
+import com.hasanunlukilinc.sms.services.SessionProvider;
+import com.hasanunlukilinc.sms.util.Encryption;
+import java.util.List;
+import org.apache.log4j.Logger;
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
+
+/**
+ *
+ * @author gngnew
+ */
+public class UserDao extends BaseDao<User>
+{
+
+	private Logger	log	= Logger.getLogger(UserDao.class);
+
+	public UserDao(SessionProvider sp)
+	{
+		super(sp);
+	}
+
+	public List<User> getUsers(Long userId, String ip)
+	{
+		List<User> list = null;
+		list = getSession().createCriteria(User.class).list();
+		return list;
+	}
+
+	public User checkUser(String username, String password)
+	{
+		User user = null;
+		Criteria cr = createCriteria(User.class);
+		cr.add(Restrictions.eq("username", username));
+		cr.add(Restrictions.eq("password", Encryption.encrypt(password)));
+		user = (User)cr.uniqueResult();
+		return user;
+	}
+
+	public void saveUser(Long userId, String ip, User user)
+	{
+		// user id ve ip log tutmak icin kullanilacak...
+		if (user.getUserId() != null && user.getUserId() != 0)
+		{
+			update(user);
+		}
+		else
+		{
+			save(user);
+		}
+	}
+
+	public void deactivateUser(Long userId, String ip, Long appUserId)
+	{
+		Query q = getSession().createQuery("UPDATE User set active = false WHERE userId = :userId");
+		q.setLong("userId", appUserId);
+		q.executeUpdate();
+	}
+
+	public void activateUser(Long userId, String ip, Long appUserId)
+	{
+		Query q = getSession().createQuery("UPDATE User set active = true WHERE userId = :userId");
+		q.setLong("userId", appUserId);
+		q.executeUpdate();
+	}
+}

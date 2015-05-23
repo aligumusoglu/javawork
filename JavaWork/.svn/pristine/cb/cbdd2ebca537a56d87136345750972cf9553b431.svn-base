@@ -1,0 +1,164 @@
+package com.hasanunlukilinc.sms.beans;
+
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
+import org.hibernate.exception.ConstraintViolationException;
+
+import com.hasanunlukilinc.sms.application.PublicResult;
+import com.hasanunlukilinc.sms.entities.Person;
+import com.hasanunlukilinc.sms.util.Encryption;
+
+/**
+ * 
+ * @author hasan
+ *
+ */
+
+@ManagedBean
+@ViewScoped
+public class PersonBean extends BaseBean
+{
+	private List<Person>	personList;
+	private List<Person>	filterPersonList;
+	private Person			selectedPerson;
+	private String			selectedPersonPassword;
+
+	public PersonBean()
+	{
+
+	}
+
+	@PostConstruct
+	private void initBean()
+	{
+		fetchPersonList();
+	}
+
+	private void fetchPersonList()
+	{
+		filterPersonList = null;
+		personList = getServiceFactory().getPersonService().getPersonList(getUserId(), getIp());
+	}
+
+	public void newPerson()
+	{
+		selectedPerson = new Person();
+	}
+
+	public void save()
+	{
+		if (selectedPerson == null)
+			return;
+
+		try
+		{
+
+			String newPassword = (!selectedPersonPassword.isEmpty() ? Encryption.encrypt(selectedPersonPassword)
+					: selectedPerson.getPassword());
+			if (!newPassword.equals(selectedPerson.getPassword()))
+				selectedPerson.setPassword(newPassword);
+
+			selectedPerson.setName(toUpperCase(selectedPerson.getName()));
+			selectedPerson.setSurname(toUpperCase(selectedPerson.getSurname()));
+
+			getServiceFactory().getPersonService().savePerson(getUserId(), getIp(), selectedPerson);
+			fetchPersonList();
+			resetDatatableFilter(String.valueOf(selectedPerson.getId()));
+			selectedPerson = new Person();
+			hideDialog("editDlg");
+			update(":editFrm:persondt", "personList");
+			addSavedMessage();
+
+		}
+		catch (ConstraintViolationException e)
+		{
+
+			if (e.getConstraintName().equals("unique_person_mail"))
+			{
+				addErrorMessage("Mail : " + selectedPerson.getMail() + " daha önce başka bir şahış için kullanılmış");
+			}
+			else
+			{
+				addNotSaveMessage();
+				addErrorMessage(e.getConstraintName() + " ");
+			}
+		}
+
+		catch (Exception e)
+		{
+			addNotSaveMessage();
+			addErrorMessage(e.getMessage());
+			e.printStackTrace();
+		}
+		finally
+		{
+			updateGrowl();
+		}
+
+	}
+
+	public void delete()
+	{
+		if (selectedPerson == null)
+			return;
+
+		PublicResult result = getServiceFactory().getPersonService().deletePerson(getUserId(), getIp(),
+				selectedPerson.getId());
+		if (result == PublicResult.SUCCESS)
+		{
+			fetchPersonList();
+			selectedPerson = new Person();
+			update("personList", "growl");
+			addDeletedMessage();
+		}
+		else if (result == PublicResult.FOREING)
+			addWarningMessage("Firma'nın uygulama içerisinde verisi mevcut!");
+		else
+			addNotDeletedMessage();
+	}
+
+	public List<Person> getPersonList()
+	{
+		return personList;
+	}
+
+	public void setPersonList(List<Person> personList)
+	{
+		this.personList = personList;
+	}
+
+	public Person getSelectedPerson()
+	{
+		return selectedPerson;
+	}
+
+	public void setSelectedPerson(Person selectedPerson)
+	{
+		this.selectedPerson = selectedPerson;
+	}
+
+	public List<Person> getFilterPersonList()
+	{
+		return filterPersonList;
+	}
+
+	public void setFilterPersonList(List<Person> filterPersonList)
+	{
+		this.filterPersonList = filterPersonList;
+	}
+
+	public String getSelectedPersonPassword()
+	{
+		return selectedPersonPassword;
+	}
+
+	public void setSelectedPersonPassword(String selectedPersonPassword)
+	{
+		this.selectedPersonPassword = selectedPersonPassword;
+	}
+
+}

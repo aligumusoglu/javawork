@@ -1,0 +1,29 @@
+package com.aligumusoglu.javawork.bean;
+
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.MongoClient;
+
+public class TestDatabase {
+
+	public static void main(String[] args) {
+		try {
+			
+			MongoClient mongo = new MongoClient("localhost", 27017);
+			DB db = mongo.getDB("JavaWork");
+			
+			DBCollection table = db.getCollection("user");
+			BasicDBObject document = new BasicDBObject();
+			document.put("name", "ali");
+			document.put("surname", "gümüşoğlu");
+			document.put("phone", "05412492633");
+			table.insert(document);
+			
+		} catch (Exception e) {
+			// TODO: handle exception
+		}
+
+	}
+
+}

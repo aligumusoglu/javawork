@@ -1,0 +1,104 @@
+package com.hasanunlukilinc.sms.beans;
+
+import com.hasanunlukilinc.sms.entities.User;
+import com.hasanunlukilinc.sms.util.Encryption;
+import java.util.List;
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+import org.apache.log4j.Logger;
+
+/**
+ *
+ * @author Gungor Akbiyik <gungor.akbiyik at gmail.com>
+ */
+@ManagedBean
+@ViewScoped
+public class UsersBean extends BaseBean
+{
+
+	private Logger		log	= Logger.getLogger(UsersBean.class);
+	private List<User>	users;
+	private User		selectedUser;
+	private String		selectedUserPassword;
+
+	public UsersBean()
+	{
+	}
+
+	@PostConstruct
+	private void initBean()
+	{
+		loadUsers();
+	}
+
+	public String getSelectedUserPassword()
+	{
+		return selectedUserPassword;
+	}
+
+	public void setSelectedUserPassword(String selectedUserPassword)
+	{
+		this.selectedUserPassword = selectedUserPassword;
+	}
+
+	public List<User> getUsers()
+	{
+		return users;
+	}
+
+	public void setUsers(List<User> users)
+	{
+		this.users = users;
+	}
+
+	public User getSelectedUser()
+	{
+		return selectedUser;
+	}
+
+	public void setSelectedUser(User selectedUser)
+	{
+		this.selectedUser = selectedUser;
+		this.selectedUserPassword = selectedUser.getPassword();
+	}
+
+	public void loadUsers()
+	{
+		users = getServiceFactory().getUserService().getUsers(getUserId(), getIp());
+	}
+
+	public void newUser()
+	{
+		selectedUser = new User();
+	}
+
+	public void save()
+	{
+		try
+		{
+			if (selectedUser == null)
+			{
+				log.error("selectedUser is null");
+				return;
+			}
+			String newPassword = (!selectedUserPassword.isEmpty() ? Encryption.encrypt(selectedUserPassword)
+					: selectedUser.getPassword());
+			if (!newPassword.equals(selectedUser.getPassword()))
+				selectedUser.setPassword(newPassword);
+
+			getServiceFactory().getUserService().saveUser(getUserId(), getIp(), selectedUser);
+
+			loadUsers();
+			hideDialog("editDlg");
+			update(":editFrm:usersdt", "growl");
+			addSavedMessage();
+
+		}
+		catch (Exception e)
+		{
+			log.error(e, e);
+			addErrorMessage("Kaydederken bir hata olustu : " + e.getMessage());
+		}
+	}
+}

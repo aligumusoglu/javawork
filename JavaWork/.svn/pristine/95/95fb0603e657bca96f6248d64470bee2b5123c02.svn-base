@@ -1,0 +1,86 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.hasanunlukilinc.sms.dao;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
+
+import com.hasanunlukilinc.sms.entities.Expense;
+import com.hasanunlukilinc.sms.services.SessionProvider;
+
+/**
+ *
+ * @author gngnew
+ * @author hasan
+ */
+public class ExpenseDao extends BaseDao<Expense>
+{
+
+	public ExpenseDao(SessionProvider sp)
+	{
+		super(sp);
+	}
+
+	public Expense checkExpense(Long companyId, String documentNo, Date documentDate)
+	{
+		Expense expense = null;
+		Criteria criteria = createCriteria(Expense.class);
+		criteria.add(Restrictions.eq("companyId", companyId));
+		criteria.add(Restrictions.eq("documentNo", documentNo));
+		criteria.add(Restrictions.eq("documentDate", documentDate));
+		expense = (Expense)criteria.uniqueResult();
+		return expense;
+	}
+
+	public void deleteExpenseById(Long expenseId)
+	{
+		if (expenseId != null && expenseId != 0)
+		{
+			Query q = getSession().createQuery("DELETE FROM Expense WHERE id = :id");
+			q.setLong("id", expenseId);
+			q.executeUpdate();
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Expense> fetchExpenseList(Long companyId, Long apartmentId, Long serviceTypeId, String documentNo,
+			Date documentDate)
+	{
+		List<Expense> expenseList = new ArrayList<Expense>();
+		Criteria criteria = createCriteria(Expense.class);
+		if (companyId != null && companyId > 0)
+			criteria.add(Restrictions.eq("companyId", companyId));
+		if (apartmentId != null && apartmentId > 0)
+			criteria.add(Restrictions.eq("apartmentId", apartmentId));
+		if (serviceTypeId != null && serviceTypeId > 0)
+			criteria.add(Restrictions.eq("serviceTypeId", serviceTypeId));
+		if (documentNo != null && !documentNo.isEmpty())
+			criteria.add(Restrictions.eq("documentNo", documentNo));
+		if (documentDate != null)
+			criteria.add(Restrictions.eq("documentDate", documentDate));
+		expenseList = (List<Expense>)criteria.list();
+
+		return expenseList;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<Expense> fetchExpenseListBetweenDates(Long apartmentId, Date firstDate, Date lastDate)
+	{
+		List<Expense> expenseList = new ArrayList<Expense>();
+		Criteria criteria = createCriteria(Expense.class);
+		criteria.add(Restrictions.eq("apartmentId", apartmentId));
+		criteria.add(Restrictions.between("documentDate", firstDate, lastDate));
+		expenseList = (List<Expense>)criteria.list();
+
+		return expenseList;
+	}
+
+}

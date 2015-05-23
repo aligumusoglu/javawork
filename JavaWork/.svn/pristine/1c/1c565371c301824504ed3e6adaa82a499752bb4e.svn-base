@@ -1,0 +1,18 @@
+package com.hasanunlukilinc.sms.application;
+
+import java.util.Date;
+
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
+public class Test
+{
+
+	public static void main(String[] args)
+	{
+
+		DateTime dateTime = new DateTime(2015, 1, 1, 0, 0);
+		System.out.println(new Date(dateTime.getMillis()).toLocaleString());
+	}
+}

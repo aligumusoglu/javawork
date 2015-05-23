@@ -1,0 +1,54 @@
+package com.hasanunlukilinc.sms.dao;
+
+import java.util.Date;
+import java.util.List;
+
+import org.hibernate.Criteria;
+import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
+
+import com.hasanunlukilinc.sms.entities.ReportPermission;
+import com.hasanunlukilinc.sms.services.SessionProvider;
+
+public class ReportPermissionDao extends BaseDao<ReportPermission>
+{
+
+	private static final long	serialVersionUID	= 1L;
+
+	public ReportPermissionDao(SessionProvider sp)
+	{
+		super(sp);
+	}
+
+	public ReportPermission findByApartmentId(Long apartmentId, Integer reportType, Date permissionDate)
+	{
+		ReportPermission rp = null;
+		Criteria criteria = getSession().createCriteria(ReportPermission.class);
+		criteria.add(Restrictions.eq("apartmentId", apartmentId));
+		criteria.add(Restrictions.eq("reportType", reportType));
+		criteria.add(Restrictions.eq("period", permissionDate));
+		rp = (ReportPermission)criteria.uniqueResult();
+		
+		return rp;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public List<ReportPermission> findAll()
+	{
+		List<ReportPermission> list = null;
+		list = getSession().createCriteria(ReportPermission.class).list();
+		return list;
+	}
+	
+	public void deleteByApartmentId(Long apartmentId, Integer reportType)
+	{
+		if (apartmentId != null && apartmentId != 0)
+		{
+			Query q = getSession().createQuery("DELETE FROM ReportPermission WHERE apartmentId = :apartmentId AND reportType = :reportType");
+			q.setLong("apartmentId",   apartmentId);
+			q.setInteger("reportType", reportType);
+			q.executeUpdate();
+		}
+	}
+	
+}

@@ -1,0 +1,65 @@
+package com.hasanunlukilinc.sms.dialog;
+
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
+import org.primefaces.context.RequestContext;
+
+import com.hasanunlukilinc.sms.beans.BaseBean;
+import com.hasanunlukilinc.sms.entities.ServiceType;
+
+/**
+ * 
+ * @author hasan
+ *
+ */
+
+@ManagedBean(name = "serviceTypeListDialogBean")
+@ViewScoped
+public class ServiceTypeListDialogBean extends BaseBean
+{
+
+	private List<ServiceType>	serviceTypeList;
+	private List<ServiceType>	filterServiceTypeList;
+
+	@PostConstruct
+	private void initBean()
+	{
+		fetchServiceTypeList();
+	}
+
+	private void fetchServiceTypeList()
+	{
+		filterServiceTypeList = null;
+		serviceTypeList = getServiceFactory().getServiceTypeService().getServiceTypeList();
+	}
+
+	public void selectedServiceTypeFromDialog(ServiceType selectedServiceType)
+	{
+		RequestContext.getCurrentInstance().closeDialog(selectedServiceType);
+	}
+
+	public List<ServiceType> getServiceTypeList()
+	{
+		return serviceTypeList;
+	}
+
+	public void setServiceTypeList(List<ServiceType> serviceTypeList)
+	{
+		this.serviceTypeList = serviceTypeList;
+	}
+
+	public List<ServiceType> getFilterServiceTypeList()
+	{
+		return filterServiceTypeList;
+	}
+
+	public void setFilterServiceTypeList(List<ServiceType> filterServiceTypeList)
+	{
+		this.filterServiceTypeList = filterServiceTypeList;
+	}
+
+}

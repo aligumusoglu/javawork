@@ -1,0 +1,96 @@
+package com.hasanunlukilinc.sms.services;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.hibernate.exception.ConstraintViolationException;
+
+import com.hasanunlukilinc.sms.application.PublicResult;
+import com.hasanunlukilinc.sms.entities.Company;
+
+/**
+ * 
+ * @author hasan
+ *
+ */
+class CompanyServiceImpl extends BaseService implements CompanyService
+{
+	private Logger	log	= Logger.getLogger(CompanyServiceImpl.class);
+
+	public CompanyServiceImpl()
+	{
+	}
+
+	@Override
+	public List<Company> getCompanyList()
+	{
+		List<Company> companyList = new ArrayList<Company>();
+		try
+		{
+			companyList = getDaoFactory().getCompanyDao().getCompanyList();
+		}
+		catch (Exception e)
+		{
+			e.printStackTrace();
+			log.error("failed!", e);
+		}
+		finally
+		{
+			closeSession();
+		}
+		return companyList;
+	}
+
+	@Override
+	public PublicResult saveCompany(Long userId, String ip, Company company)
+	{
+		PublicResult result = PublicResult.FAIL;
+		try
+		{
+			beginTransaction();
+
+			getDaoFactory().getCompanyDao().merge(company);
+			commitTransaction();
+			result = PublicResult.SUCCESS;
+		}
+		catch (ConstraintViolationException e)
+		{
+			rollback();
+			log.error("failed!", e);
+			result = PublicResult.DUPLICATE;
+			throw e;
+		}
+		finally
+		{
+			closeSession();
+		}
+
+		return result;
+	}
+
+	@Override
+	public PublicResult deleteCompany(Long userId, String ip, Long companyId)
+	{
+		PublicResult result = PublicResult.FAIL;
+		try
+		{
+			beginTransaction();
+			getDaoFactory().getCompanyDao().deleteCompany(companyId);
+			commitTransaction();
+			result = PublicResult.SUCCESS;
+		}
+		catch (Exception e)
+		{
+			rollback();
+			e.printStackTrace();
+			log.error("failed!", e);
+		}
+		finally
+		{
+			closeSession();
+		}
+
+		return result;
+	}
+}

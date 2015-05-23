@@ -1,0 +1,29 @@
+package com.hasanunlukilinc.sms.dao;
+
+import com.hasanunlukilinc.sms.entities.OverdueInterest;
+import com.hasanunlukilinc.sms.services.SessionProvider;
+import java.util.Date;
+import java.util.List;
+import org.hibernate.Query;
+
+/**
+ *
+ * @author hasan
+ *
+ */
+public class OverdueInterestDao extends BaseDao<OverdueInterest> {
+
+    public OverdueInterestDao(SessionProvider sp) {
+        super(sp);
+    }
+
+    public Double getOverdueInterestRate(Date date) {
+        Double rate = null;
+        Query q = getSession().createQuery("SELECT interestRate FROM OverdueInterest WHERE interestDate = (select max(interestDate) FROM OverdueInterest where interestDate <= :crdate)");
+        q.setDate("crdate", date);
+        rate = (Double) q.uniqueResult();
+        return rate == null ? 0.0 : rate;
+    }
+
+    
+}

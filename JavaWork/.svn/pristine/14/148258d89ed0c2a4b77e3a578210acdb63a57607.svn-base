@@ -1,0 +1,57 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.hasanunlukilinc.sms.dao;
+
+import com.hasanunlukilinc.sms.entities.House;
+import com.hasanunlukilinc.sms.services.SessionProvider;
+
+import java.util.List;
+
+import org.hibernate.Query;
+import org.hibernate.criterion.Restrictions;
+
+/**
+ *
+ * @author gngnew
+ * @author hasan
+ */
+public class HouseDao extends BaseDao<House>
+{
+
+	public HouseDao(SessionProvider sp)
+	{
+		super(sp);
+	}
+
+	public List<House> searchByBlockId(Long blockId)
+	{
+		return getSession().createCriteria(House.class).add(Restrictions.eq("blockId", blockId)).list();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<House> getHouseListByApartmentId(Long apartmenId)
+	{
+
+		List<House> houseList = null;
+
+		Query q = getSession()
+				.createQuery("SELECT H FROM House as H INNER JOIN FETCH H.block as B WHERE B.apartmentId = :apartmentId");
+		q.setLong("apartmentId", apartmenId);
+		houseList = q.list();
+		return houseList;
+	}
+        
+        public List<House> fetchPersonsHouse(Long personId) {
+            Query q = getSession().createQuery("select h, b, a from House h "
+                    + "JOIN FETCH h.block b "
+                    + "JOIN FETCH b.apartment a "
+                    + "where h.tenantId = :personId or h.landlordId = :personId "
+                    + "order by a.name, b.blockName, h.houseNumber");
+            q.setLong("personId", personId);
+            List<House> list = q.list();
+            return list;
+        }
+}

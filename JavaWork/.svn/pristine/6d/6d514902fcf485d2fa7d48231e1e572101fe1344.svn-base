@@ -1,0 +1,14 @@
+package com.hasanunlukilinc.sms.dao;
+
+import com.hasanunlukilinc.sms.entities.Info;
+import com.hasanunlukilinc.sms.services.SessionProvider;
+
+public class InfoDao extends BaseDao<Info>
+{
+
+	public InfoDao(SessionProvider sp)
+	{
+		super(sp);
+	}
+
+}

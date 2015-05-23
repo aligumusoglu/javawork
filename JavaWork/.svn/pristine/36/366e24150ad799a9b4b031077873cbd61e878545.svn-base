@@ -1,0 +1,24 @@
+package com.hasanunlukilinc.sms.services;
+
+import java.sql.Timestamp;
+import java.util.List;
+
+import com.hasanunlukilinc.sms.application.ProcessType;
+import com.hasanunlukilinc.sms.entities.AppLog;
+
+/**
+ * 
+ * @author hasan
+ *
+ */
+public interface AppLogService
+{
+
+	public void saveAppLog(ProcessType processType, String definition, Long userId);
+
+	public List<AppLog> getAppLogList();
+
+	public List<AppLog> getAppLogListBySearch(ProcessType processType, Timestamp firstDate, Timestamp secondDate,
+			Long userId);
+
+}

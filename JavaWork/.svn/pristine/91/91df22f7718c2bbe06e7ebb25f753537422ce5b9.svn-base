@@ -1,0 +1,24 @@
+package com.hasanunlukilinc.sms.beans;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ApplicationScoped;
+import javax.faces.bean.ManagedBean;
+
+/**
+ *
+ * @author Gungor Akbiyik <gungor.akbiyik at gmail.com>
+ */
+@ManagedBean(name = "applicationBean")
+@ApplicationScoped
+public class ApplicationBean
+{
+
+	public ApplicationBean()
+	{
+	}
+
+	@PostConstruct
+	private void initApplication()
+	{
+	}
+}

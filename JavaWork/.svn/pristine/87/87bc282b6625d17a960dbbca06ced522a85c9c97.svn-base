@@ -1,0 +1,65 @@
+package com.hasanunlukilinc.sms.dialog;
+
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
+import org.primefaces.context.RequestContext;
+
+import com.hasanunlukilinc.sms.beans.BaseBean;
+import com.hasanunlukilinc.sms.entities.Company;
+
+/**
+ * 
+ * @author hasan
+ *
+ */
+
+@ManagedBean(name = "companyListDialogBean")
+@ViewScoped
+public class CompanyListDialogBean extends BaseBean
+{
+
+	private List<Company>	companyList;
+	private List<Company>	filterCompanyList;
+
+	@PostConstruct
+	private void initBean()
+	{
+		fetchCompanyList();
+	}
+
+	private void fetchCompanyList()
+	{
+		filterCompanyList = null;
+		companyList = getServiceFactory().getCompanyService().getCompanyList();
+	}
+
+	public void selectedCompanyFromDialog(Company selectedCompany)
+	{
+		RequestContext.getCurrentInstance().closeDialog(selectedCompany);
+	}
+
+	public List<Company> getCompanyList()
+	{
+		return companyList;
+	}
+
+	public void setCompanyList(List<Company> companyList)
+	{
+		this.companyList = companyList;
+	}
+
+	public List<Company> getFilterCompanyList()
+	{
+		return filterCompanyList;
+	}
+
+	public void setFilterCompanyList(List<Company> filterCompanyList)
+	{
+		this.filterCompanyList = filterCompanyList;
+	}
+
+}

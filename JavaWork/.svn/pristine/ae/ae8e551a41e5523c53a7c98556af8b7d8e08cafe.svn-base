@@ -1,0 +1,79 @@
+package com.hasanunlukilinc.sms.dao;
+
+import com.hasanunlukilinc.sms.entities.BaseEntity;
+import com.hasanunlukilinc.sms.services.SessionProvider;
+import java.io.Serializable;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.List;
+import org.hibernate.Criteria;
+import org.hibernate.Session;
+
+/**
+ *
+ * @author Gungor Akbiyik <gungor.akbiyik at gmail.com> <gungor.akbiyik at
+ */
+public class BaseDao<T> implements Serializable {
+
+    protected SessionProvider sp;
+    private Class _entityClass;
+
+    public BaseDao(SessionProvider sp) {
+        this.sp = sp;
+    }
+
+    public Serializable save(Object o) {
+        Serializable s = null;
+        s = sp.getSession().save(o);
+        return s;
+    }
+
+    public void update(Object o) {
+        sp.getSession().update(o);
+    }
+
+    public Object merge(Object o) {
+        Object s = null;
+        s = sp.getSession().merge(o);
+        return s;
+    }
+
+    public Criteria createCriteria(Class type) {
+        return sp.getSession().createCriteria(type);
+    }
+
+    public Session getSession() {
+        return sp.getSession();
+    }
+
+    public List<T> findAll() {
+        List<T> list = getSession().createCriteria(getEntityClass()).list();
+        return list;
+    }
+
+    protected synchronized Class getEntityClass() {
+
+        if (_entityClass == null) {
+            Type type = getClass().getGenericSuperclass();
+            loop:
+            while (true) {
+                if (type instanceof ParameterizedType) {
+                    Type[] arguments = ((ParameterizedType) type).getActualTypeArguments();
+                    for (Type argument : arguments) {
+                        if (argument instanceof Class
+                                && BaseEntity.class.isAssignableFrom(((Class) argument))) {
+                            _entityClass = (Class) argument;
+                            break loop;
+                        }
+                    }
+                }
+                type = ((Class) type).getGenericSuperclass();
+                if (type == Object.class) {
+                    throw new RuntimeException(
+                            "Could not find a DatabaseObject subclass parameterized type");
+                }
+            }
+        }
+        return _entityClass;
+    }
+}

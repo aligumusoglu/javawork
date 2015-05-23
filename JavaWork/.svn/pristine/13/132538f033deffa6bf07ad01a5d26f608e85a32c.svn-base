@@ -1,0 +1,167 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" 
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+       xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      lang="tr">
+
+	<f:metadata>
+        <f:event type="preRenderView" listener="#{sessionBean.setCurrentPage(4)}" />
+    </f:metadata>
+       <h:body>
+       <ui:composition template="./template.xhtml">
+		<ui:define name="title">Site Yönetici</ui:define>
+		<ui:define name="head"></ui:define>
+		<ui:define name="content">
+                <div class="page-header">
+                <h:form class="form pull-right">
+                      <h:selectOneMenu styleClass="form-control" style="width:160px;" value="#{balanceBean.selectedYear}" required="true">
+                        <p:ajax listener="#{balanceBean.createMonthBalanceReportForPage()}" update=":frmBalanceDetail"/>
+		                <f:selectItem itemLabel="Yıl Seçiniz" itemValue=""  />
+		               	<f:selectItems value="#{balanceBean.years}"/>
+           			 </h:selectOneMenu>
+           			 
+           			 <h:selectOneMenu styleClass="form-control" style="width:160px" value="#{balanceBean.selectedMonth}" required="true">
+           			 	 <p:ajax listener="#{balanceBean.createMonthBalanceReportForPage()}" update=":frmBalanceDetail"/>
+		                 <f:selectItem itemLabel="Ay Seçiniz"  itemValue=""  />
+		                 <f:selectItem itemLabel="Ocak"        itemValue="1"  />
+		                 <f:selectItem itemLabel="Şubat"       itemValue="2"  />
+		                 <f:selectItem itemLabel="Mart"        itemValue="3"  />
+		                 <f:selectItem itemLabel="Nisan"       itemValue="4"  />
+		                 <f:selectItem itemLabel="Mayıs"       itemValue="5"  />
+		                 <f:selectItem itemLabel="Haziran"     itemValue="6"  />
+		                 <f:selectItem itemLabel="Temmuz"      itemValue="7"  />
+		                 <f:selectItem itemLabel="Ağustos"     itemValue="8"  />
+		                 <f:selectItem itemLabel="Eylül"       itemValue="9"  />
+		                 <f:selectItem itemLabel="Ekim"        itemValue="10"  />
+		                 <f:selectItem itemLabel="Kasım"       itemValue="11"  />
+		                 <f:selectItem itemLabel="Aralık"      itemValue="12"  />
+           			  </h:selectOneMenu>
+           			  
+          			  
+                </h:form>
+                 <h3>   #{sessionBean.selectedHouse.block.apartment.name},
+	                    #{sessionBean.selectedHouse.block.blockName},
+	                    #{sessionBean.selectedHouse.houseNumber}
+	             </h3>
+                </div>
+                <h:form id="frmBalanceDetail">
+                <div align="right">
+                <p:commandButton value="Aylık Bilanço PDF" process="@all"
+          			  	styleClass="btn btn-default" style="display:block; width:160px;"
+						onstart="showWait();" oncomplete="hideWait();"
+						actionListener="#{balanceBean.createDefaultMonthBalanceReport()}"
+						onclick="PrimeFaces.monitorDownload(start, stop);"
+						icon="ui-icon-arrowthick-1-s">
+						<p:fileDownload value="#{balanceBean.streamedContent}" />
+					  </p:commandButton>
+					  
+					   <p:commandButton value="Detaylı Bilanço PDF" process="@all"
+          			  	styleClass="btn btn-default" style="width:160px;"
+						onstart="showWait();" oncomplete="hideWait();"
+						actionListener="#{balanceBean.createDetailedMonthBalanceReport()}"
+						onclick="PrimeFaces.monitorDownload(start, stop);"
+						icon="ui-icon-arrowthick-1-s">
+						<p:fileDownload value="#{balanceBean.streamedContent}" />
+					  </p:commandButton>
+				</div>
+                <table class="table">
+                    <thead>
+                        <th class="col-md-10"><big>Gelirler</big></th>
+                        <th class="col-md-2 text-right">Tutar</th>
+                    </thead>
+                    <tr>
+                        <td>#{balanceBean.monthBalanceReport.oldMonthName} Ayı Devir Kasa</td>
+                        <td class="text-right">
+                        	<h:outputText value="#{balanceBean.monthBalanceReport.oldBalance}">
+                        		<f:convertNumber type="currency" locale="TR_tr" />
+                        	</h:outputText>                         
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>#{balanceBean.monthBalanceReport.monthName} Ayı Toplanan Aidat</td>
+                        <td class="text-right">
+                        <h:outputText value="#{balanceBean.monthBalanceReport.dues}">
+                        	<f:convertNumber type="currency" locale="TR_tr" />
+                        </h:outputText>
+                        	</td>
+                    </tr>
+                    <tr>
+                        <td>#{balanceBean.monthBalanceReport.monthName} Ayı Toplanan Ek Aidat</td>
+                        <td class="text-right">
+                        	<h:outputText value="#{balanceBean.monthBalanceReport.extraDues}">
+                        		<f:convertNumber type="currency" locale="TR_tr" />
+                        	</h:outputText> 
+                        </td>
+                    </tr>
+                    <tfoot>
+                        <th>Toplam</th>
+                        <th class="text-right">
+                        <h:outputText value="#{balanceBean.monthBalanceReport.dues+balanceBean.monthBalanceReport.extraDues}">
+                        	<f:convertNumber type="currency" locale="TR_tr" />
+                        </h:outputText>
+                        </th>
+					</tfoot>
+					                    
+                </table>
+                <table class="table">
+                    <thead>
+                        <th class="col-md-10"><big>Giderler</big></th>
+                        <th class="col-md-2 text-right">Tutar</th>
+                    </thead>
+                    <ui:repeat var="expense" value="#{balanceBean.monthBalanceReport.expenses}">
+                    	 <tr>
+                        <td>#{expense.description}</td>
+                        <td class="text-right">
+                        	<h:outputText value="#{expense.price}">
+                        		<f:convertNumber type="currency" locale="TR_tr" />
+                        	</h:outputText>
+                        </td>
+                    </tr>
+                    </ui:repeat>
+                     <tfoot>
+                        <th>Giderler Toplamı</th>
+                        <th class="text-right">
+                        	<h:outputText value="#{balanceBean.monthBalanceReport.totalExpenses}">
+                        		<f:convertNumber type="currency" locale="TR_tr" />
+                        	</h:outputText>
+                        </th>
+					</tfoot>
+                </table>
+                <table class="table">
+                    <tr>
+                        <td>Toplam gelir</td>
+                        <td class="text-right">
+                        	<h:outputText value="#{balanceBean.monthBalanceReport.dues+balanceBean.monthBalanceReport.extraDues}">
+                        		<f:convertNumber type="currency" locale="TR_tr" />
+                        	</h:outputText> 
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Toplam gider</td>
+                        <td class="text-right">
+                        	<h:outputText value="#{balanceBean.monthBalanceReport.totalExpenses}">
+                        		<f:convertNumber type="currency" locale="TR_tr" />
+                        	</h:outputText>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Kasa devir</td>
+                        <td class="text-right">
+                        	<h:outputText value="#{(balanceBean.monthBalanceReport.dues
+                        						+balanceBean.monthBalanceReport.extraDues
+                        						+balanceBean.monthBalanceReport.oldBalance) 
+                        						- balanceBean.monthBalanceReport.totalExpenses}">
+                        			<f:convertNumber type="currency" locale="TR_tr" />
+                        	</h:outputText> 
+                        </td>
+                    </tr>
+                </table>
+                </h:form>
+                
+            </ui:define>
+        </ui:composition>
+    </h:body>
+</html>

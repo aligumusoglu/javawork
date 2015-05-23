@@ -1,0 +1,19 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.hasanunlukilinc.sms.services;
+
+import org.hibernate.Session;
+
+/**
+ *
+ * @author gngnew
+ */
+public interface SessionProvider
+{
+
+	public Session getSession();
+
+}

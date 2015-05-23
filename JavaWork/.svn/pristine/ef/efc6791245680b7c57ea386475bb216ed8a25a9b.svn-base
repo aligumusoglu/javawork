@@ -1,0 +1,178 @@
+package com.hasanunlukilinc.sms.dao;
+
+import com.hasanunlukilinc.sms.entities.ReportPermission;
+import com.hasanunlukilinc.sms.services.BaseService;
+
+/**
+ *
+ * @author gngnew
+ */
+public class DaoFactory
+{
+
+	private BaseService			baseService;
+
+	private ApartmentDao		apartmentDao;
+	private AppLogDao			appLogDao;
+	private BlockDao			blockDao;
+	private CompanyDao			companyDao;
+	private ExpenseDao			expenseDao;
+	private InfoDao				infoDao;
+	private IncomeDao			incomeDao;
+	private IncomeReceivableDao	incomeReceivableDao;
+	private JanitorDao			janitorDao;
+	private MonthBalanceDao		monthBalanceDao;
+	private PersonDao			personDao;
+	private ReceivableDao		receivableDao;
+	private ServiceTypeDao		serviceTypeDao;
+	private UserDao				userDao;
+	private HouseDao			houseDao;
+	private ContractDao			contractDao;
+	private DuesDao				duesDao;
+	private OverdueInterestDao		overdueInterestDao;
+	private ReportPermissionDao	reportPermissionDao;
+	
+	public DaoFactory(BaseService baseService)
+	{
+		this.baseService = baseService;
+	}
+
+	public ApartmentDao getApartmentDao()
+	{
+		if (apartmentDao == null)
+			apartmentDao = new ApartmentDao(baseService);
+		return apartmentDao;
+	}
+
+	public AppLogDao getAppLogDao()
+	{
+		if (appLogDao == null)
+			appLogDao = new AppLogDao(baseService);
+		return appLogDao;
+	}
+
+	public BlockDao getBlockDao()
+	{
+		if (blockDao == null)
+			blockDao = new BlockDao(baseService);
+		return blockDao;
+	}
+
+	public CompanyDao getCompanyDao()
+	{
+		if (companyDao == null)
+			companyDao = new CompanyDao(baseService);
+		return companyDao;
+	}
+
+	public ExpenseDao getExpenseDao()
+	{
+		if (expenseDao == null)
+			expenseDao = new ExpenseDao(baseService);
+		return expenseDao;
+	}
+
+	public IncomeDao getIncomeDao()
+	{
+		if (incomeDao == null)
+			incomeDao = new IncomeDao(baseService);
+		return incomeDao;
+	}
+
+	public IncomeReceivableDao getIncomeReceivableDao()
+	{
+		if (incomeReceivableDao == null)
+			incomeReceivableDao = new IncomeReceivableDao(baseService);
+		return incomeReceivableDao;
+	}
+
+	public JanitorDao getJanitorDao()
+	{
+		if (janitorDao == null)
+			janitorDao = new JanitorDao(baseService);
+		return janitorDao;
+	}
+
+	public MonthBalanceDao getMonthBalanceDao()
+	{
+		if (monthBalanceDao == null)
+			monthBalanceDao = new MonthBalanceDao(baseService);
+		return monthBalanceDao;
+	}
+
+	public PersonDao getPersonDao()
+	{
+		if (personDao == null)
+			personDao = new PersonDao(baseService);
+		return personDao;
+	}
+
+	public ReceivableDao getReceivableDao()
+	{
+		if (receivableDao == null)
+			receivableDao = new ReceivableDao(baseService);
+		return receivableDao;
+	}
+
+	public ServiceTypeDao getServiceTypeDao()
+	{
+		if (serviceTypeDao == null)
+			serviceTypeDao = new ServiceTypeDao(baseService);
+		return serviceTypeDao;
+	}
+
+	public UserDao getUserDao()
+	{
+		if (userDao == null)
+			userDao = new UserDao(baseService);
+		return userDao;
+	}
+
+	public HouseDao getHouseDao()
+	{
+		if (houseDao == null)
+			houseDao = new HouseDao(baseService);
+		return houseDao;
+	}
+
+	public ContractDao getContractDao()
+	{
+		if (contractDao == null)
+			contractDao = new ContractDao(baseService);
+		return contractDao;
+	}
+
+	public DuesDao getDuesDao()
+	{
+		if (duesDao == null)
+			duesDao = new DuesDao(baseService);
+		return duesDao;
+	}
+
+    public OverdueInterestDao getOverdueInterestDao() 
+    {
+        if (overdueInterestDao == null)
+        {
+            overdueInterestDao = new OverdueInterestDao(baseService);
+        }
+        return overdueInterestDao;
+    }
+    
+    public InfoDao getInfoDao() 
+    {
+        if (infoDao == null)
+        {
+            infoDao = new InfoDao(baseService);
+        }
+        return infoDao;
+    }
+    
+        
+    public ReportPermissionDao getReportPermissionDao()
+	{
+		if (reportPermissionDao == null)
+			reportPermissionDao= new ReportPermissionDao(baseService);
+		return reportPermissionDao;
+	}
+
+}

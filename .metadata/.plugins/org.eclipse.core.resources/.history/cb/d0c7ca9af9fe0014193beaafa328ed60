@@ -1,0 +1,107 @@
+package com.aligumusoglu.javawork.bean;
+
+import java.util.ArrayList;
+
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
+
+import com.aligumusoglu.javawork.model.User;
+import com.mongodb.BasicDBObject;
+import com.mongodb.DB;
+import com.mongodb.DBCollection;
+import com.mongodb.DBCursor;
+import com.mongodb.MongoClient;
+
+@ManagedBean
+@ViewScoped
+public class MainPageBean {
+
+	private ArrayList<User> userList = new ArrayList<User>();
+	private ArrayList<User> filteredUserList = new ArrayList<User>();
+	private User selectedUser;
+
+	public MainPageBean() {
+		getAllDocuments();
+
+	}
+
+	public void getAllDocuments() {
+		try {
+			MongoClient mongo = new MongoClient("localhost", 27017);
+			DB db = mongo.getDB("JavaWork");
+			DBCollection table = db.getCollection("user");
+			DBCursor cursor = table.find();
+
+			BasicDBObject object = null;
+			User user = null;
+
+			while (cursor.hasNext()) {
+				object = (BasicDBObject) cursor.next();
+				user = new User();
+				user.set_id(object.getString("_id"));
+				user.setName(object.getString("name"));
+				user.setSurname(object.getString("surname"));
+				user.setPhone(object.getString("phone"));
+				userList.add(user);
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void newUser() {
+		selectedUser = new User();
+	}
+	
+
+	public void save(User selectedUser) {
+
+
+			try {
+
+				MongoClient mongo = new MongoClient("localhost", 27017);
+				DB db = mongo.getDB("JavaWork");
+				DBCollection table = db.getCollection("user");
+
+				BasicDBObject object = new BasicDBObject();
+
+				object.put("name", selectedUser.getName());
+				object.put("surname", selectedUser.getSurname());
+				object.put("phone", selectedUser.getPhone());
+				table.insert(object);
+
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+
+	}
+
+	public void setUserList(ArrayList<User> userList) {
+		this.userList = userList;
+	}
+
+	public ArrayList<User> getUserList() {
+		return userList;
+	}
+
+	public User getSelectedUser() {
+		return selectedUser;
+	}
+
+	public void setSelectedUser(User selectedUser) {
+		this.selectedUser = selectedUser;
+	}
+
+	public ArrayList<User> getFilteredUserList() {
+		return filteredUserList;
+	}
+
+	public void setFilteredUserList(ArrayList<User> filteredUserList) {
+		this.filteredUserList = filteredUserList;
+	}
+
+}

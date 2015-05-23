@@ -1,0 +1,134 @@
+package com.hasanunlukilinc.sms.beans;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.annotation.PostConstruct;
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.ViewScoped;
+
+import org.joda.time.DateTime;
+
+import com.hasanunlukilinc.sms.entities.Debt;
+import com.hasanunlukilinc.sms.entities.Receivable;
+
+
+@ManagedBean
+@ViewScoped
+public class DebtBean extends BaseBean
+{
+	private static final long 	serialVersionUID = 1L;
+	private	ArrayList<Debt>		debtList 	  = new ArrayList<Debt>();
+	private List<Integer>		years 		  = new ArrayList<Integer>();
+	private int					selectedYear  ;
+	private double				debtListTotal = 0.0;
+	
+	@PostConstruct
+	private void initBean()
+	{
+		initYears();
+		if(getSessionBean().getSelectedHouse() != null)
+			createMonthlyDebtList();
+		
+	}
+	
+	public void onYearChoosen()
+	{
+		createMonthlyDebtList();
+	}
+	
+	private void createMonthlyDebtList()
+	{
+		debtList.clear();
+		debtListTotal = 0.0;
+		
+		List<Receivable> receivables = getServiceFactory().getIncomeService().fetchReceivableListByHouseIdAndYear(getSessionBean().getSelectedHouse(), selectedYear);
+		for(Receivable r : receivables)
+		{
+			DateTime datetime = new DateTime(r.getPeriod());
+			int month = Integer.parseInt(datetime.toString("MM"));
+			Debt debt = new Debt(month);
+			debt.setPeriod(r.getPeriod());
+			
+			/*Debt sinifinin equals metodu month degiskeni ile override edildi.
+			 * Eger debt listesinde ayni aya ait bir nesne varsa bu nesnenin borclarini listedeki
+			 * debt listesine ekle, yoksa yeni nesneyi listeye ekle */
+			if(debtList.contains(debt))
+			{
+				debtList.get(debtList.indexOf(debt)).getReceivables().add(r);
+			}
+			else
+			{
+				debt.getReceivables().add(r);
+				debtList.add(debt);
+			}
+		}
+		
+		calculateDebtTotals();
+		calculateDebtListTotal();
+	}
+	
+	private void calculateDebtTotals()
+	{
+		for(Debt debt : debtList)
+		{
+			for(Receivable r : debt.getReceivables())
+			{
+				debt.setTotalDebt(debt.getTotalDebt() + r.getPrice());
+			}
+		}
+	}
+	
+	private void calculateDebtListTotal()
+	{
+		for(Debt debt : debtList)
+		{
+			debtListTotal  += debt.getTotalDebt();
+		}
+	}
+
+	private void initYears()
+	{
+		DateTime datetime = new DateTime();
+		int currentYear = Integer.parseInt(datetime.toString("yyyy"));
+		years.add(currentYear);
+		while(years.size() < 6)
+		{
+			currentYear -= 1;
+			years.add(currentYear);
+		}
+		selectedYear = years.get(0);
+	}
+	
+	public ArrayList<Debt> getDebtList() {
+		return debtList;
+	}
+	
+	public void setDebtList(ArrayList<Debt> debtList) {
+		this.debtList = debtList;
+	}
+	
+	public List<Integer> getYears() {
+		return years;
+	}
+	
+	public void setYears(List<Integer> years) {
+		this.years = years;
+	}
+	public int getSelectedYear() {
+		return selectedYear;
+	}
+	
+	public void setSelectedYear(int selectedYear) {
+		this.selectedYear = selectedYear;
+	}
+	
+	public double getDebtListTotal() {
+		return debtListTotal;
+	}
+	
+	public void setDebtListTotal(double debtListTotal) {
+		this.debtListTotal = debtListTotal;
+	}
+
+}
